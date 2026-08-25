@@ -5,6 +5,8 @@ from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
 class Settings(BaseSettings):
     DATABASE_URL: str
+    SUPABASE_URL: str
+    SUPABASE_KEY: str
 
     class Config:
         env_file = ".env"

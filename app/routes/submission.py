@@ -1,5 +1,10 @@
-from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
+
+from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
+from fastapi.responses import Response
+
+import uuid
+from app.supabase import supabase
 
 from app.database import get_db
 from app.models.submission import Submission
@@ -35,3 +40,97 @@ def create_submission(
         "message": "Submission created successfully",
         "submission_id": new_submission.id
     }
+
+
+@router.post("/upload")
+async def upload_submission_file(
+    submission_id: int,
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db)
+):
+    # Check that the submission exists
+    submission = db.query(Submission).filter(
+        Submission.id == submission_id
+    ).first()
+
+    if not submission:
+        raise HTTPException(
+            status_code=404,
+            detail="Submission not found"
+        )
+
+    # Get file extension
+    file_extension = file.filename.split(".")[-1]
+
+    # Generate unique filename
+    file_name = f"{uuid.uuid4()}.{file_extension}"
+
+    # Read file
+    file_bytes = await file.read()
+
+    # Upload to Supabase Storage
+    response = supabase.storage.from_("submissions").upload(
+        path=file_name,
+        file=file_bytes,
+        file_options={
+            "content-type": file.content_type,
+            "upsert": "false"
+        }
+    )
+
+    # Save the Supabase file URL in the database
+    public_url = supabase.storage.from_("submissions").get_public_url(file_name)
+
+    submission.media_url = public_url
+    submission.media_type = file.content_type
+
+    db.commit()
+    db.refresh(submission)
+
+    return {
+        "message": "File uploaded successfully",
+        "submission_id": submission.id,
+        "file_name": file_name
+    }
+
+
+
+@router.get("/")
+def get_submissions(
+    db: Session = Depends(get_db)
+):
+    submissions = db.query(Submission).all()
+
+    return submissions
+
+
+
+@router.get("/{submission_id}/media")
+def get_submission_media(
+    submission_id: int,
+    db: Session = Depends(get_db)
+):
+    submission = db.query(Submission).filter(
+        Submission.id == submission_id
+    ).first()
+
+    if not submission:
+        raise HTTPException(
+            status_code=404,
+            detail="Submission not found"
+        )
+
+    if not submission.media_url:
+        raise HTTPException(
+            status_code=404,
+            detail="No media found for this submission"
+        )
+
+    file_name = submission.media_url.split("/")[-1]
+
+    file_bytes = supabase.storage.from_("submissions").download(file_name)
+
+    return Response(
+        content=file_bytes,
+        media_type=submission.media_type
+    )

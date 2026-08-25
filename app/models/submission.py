@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, DateTime
+from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey
 from datetime import datetime
 
 from app.database import Base
@@ -10,6 +10,8 @@ class Submission(Base):
     id = Column(Integer, primary_key=True, index=True)
 
     content_type = Column(String(50), nullable=False)
+
+    student_id = Column(Integer, ForeignKey("students.id"), nullable=False)
 
     student_class = Column(String(50), nullable=False)
 
