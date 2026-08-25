@@ -1,3 +1,5 @@
+import base64
+
 from sqlalchemy.orm import Session
 
 from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
@@ -24,6 +26,7 @@ def create_submission(
 ):
     new_submission = Submission(
         content_type=submission_data.content_type,
+        student_id=submission_data.student_id,
         student_class=submission_data.student_class,
         heading=submission_data.heading,
         description=submission_data.description,
@@ -97,11 +100,34 @@ async def upload_submission_file(
 
 @router.get("/")
 def get_submissions(
+    student_id: int | None = None,
     db: Session = Depends(get_db)
 ):
-    submissions = db.query(Submission).all()
+    query = db.query(Submission)
 
-    return submissions
+    if student_id is not None:
+        query = query.filter(Submission.student_id == student_id)
+
+    submissions = query.all()
+
+    results = []
+
+    for submission in submissions:
+
+        results.append({
+            "id": submission.id,
+            "content_type": submission.content_type,
+            "student_id": submission.student_id,
+            "student_class": submission.student_class,
+            "heading": submission.heading,
+            "description": submission.description,
+            "written_content": submission.written_content,
+            "media_url": submission.media_url,
+            "media_type": submission.media_type,
+            "created_at": submission.created_at
+        })
+
+    return results
 
 
 
