@@ -20,14 +20,18 @@ class UserSignup(BaseModel):
         max_length=100
     )
 
+    is_student: bool
+
     dob: date
 
-    school: str = Field(
+    school: str | None = Field(
+        default=None,
         min_length=2,
         max_length=200
     )
 
-    student_class: str = Field(
+    student_class: str | None = Field(
+        default=None,
         min_length=1,
         max_length=50
     )

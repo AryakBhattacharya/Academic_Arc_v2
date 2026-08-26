@@ -37,6 +37,7 @@ def signup(
         name=user_data.name,
         email=user_data.email,
         phone=user_data.phone,
+        is_student=user_data.is_student,
         password_hash=hash_password(
             user_data.password
         )
@@ -46,22 +47,25 @@ def signup(
     db.commit()
     db.refresh(new_user)
 
-    new_student = Student(
-        user_id=new_user.id,
-        name=user_data.name,
-        dob=user_data.dob,
-        school=user_data.school,
-        student_class=user_data.student_class
-    )
+    new_student = None
 
-    db.add(new_student)
-    db.commit()
-    db.refresh(new_student)
+    if user_data.is_student:
+        new_student = Student(
+            user_id=new_user.id,
+            name=user_data.name,
+            dob=user_data.dob,
+            school=user_data.school,
+            student_class=user_data.student_class
+        )
+
+        db.add(new_student)
+        db.commit()
+        db.refresh(new_student)
 
     return {
         "message": "User created successfully",
         "user_id": new_user.id,
-        "student_id": new_student.id
+        "student_id": new_student.id if new_student else None
     }
 
 @router.post("/login")
