@@ -11,7 +11,7 @@ class Submission(Base):
 
     content_type = Column(String(50), nullable=False)
 
-    student_id = Column(Integer, ForeignKey("students.id"), nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
 
     student_class = Column(String(50), nullable=False)
 

@@ -7,7 +7,11 @@ from app.database import get_db
 from app.models.user import User
 from app.schemas.user import UserSignup, UserLogin
 
-from app.services.auth import hash_password, verify_password
+from app.services.auth import (
+    hash_password,
+    verify_password,
+    create_access_token
+)
 
 
 router = APIRouter(
@@ -103,8 +107,11 @@ def login(
         .first()
     )
 
+    access_token = create_access_token(user.id)
+
     return {
-        "message": "Login successful",
-        "user_id": user.id,
-        "student_id": student.id if student else None
-    }
+    "message": "Login successful",
+    "user_id": user.id,
+    "student_id": student.id if student else None,
+    "access_token": access_token
+}

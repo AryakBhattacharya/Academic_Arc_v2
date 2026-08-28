@@ -11,22 +11,45 @@ from app.supabase import supabase
 from app.database import get_db
 from app.models.submission import Submission
 from app.schemas.submission import SubmissionCreate
+from app.models.user import User
+from app.services.auth import get_current_user, decode_access_token
 
+from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 router = APIRouter(
     prefix="/submissions",
     tags=["Submissions"]
 )
 
+security = HTTPBearer()
+
 
 @router.post("/")
 def create_submission(
     submission_data: SubmissionCreate,
+    credentials: HTTPAuthorizationCredentials = Depends(security),
     db: Session = Depends(get_db)
 ):
+    payload = decode_access_token(credentials.credentials)
+
+    if not payload:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid or expired token"
+        )
+
+    user_id = payload.get("user_id")
+
+    if not user_id:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid token"
+        )
+
     new_submission = Submission(
         content_type=submission_data.content_type,
-        student_id=submission_data.student_id,
+        user_id=user_id,
         student_class=submission_data.student_class,
         heading=submission_data.heading,
         description=submission_data.description,
@@ -49,11 +72,28 @@ def create_submission(
 async def upload_submission_file(
     submission_id: int,
     file: UploadFile = File(...),
+    credentials: HTTPAuthorizationCredentials = Depends(security),
     db: Session = Depends(get_db)
 ):
-    # Check that the submission exists
+    payload = decode_access_token(credentials.credentials)
+
+    if not payload:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid or expired token"
+        )
+
+    user_id = payload.get("user_id")
+
+    if not user_id:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid token"
+        )
+
     submission = db.query(Submission).filter(
-        Submission.id == submission_id
+        Submission.id == submission_id,
+        Submission.user_id == user_id
     ).first()
 
     if not submission:
@@ -97,18 +137,30 @@ async def upload_submission_file(
     }
 
 
-
 @router.get("/")
 def get_submissions(
-    student_id: int | None = None,
+    credentials: HTTPAuthorizationCredentials = Depends(security),
     db: Session = Depends(get_db)
 ):
-    query = db.query(Submission)
+    payload = decode_access_token(credentials.credentials)
 
-    if student_id is not None:
-        query = query.filter(Submission.student_id == student_id)
+    if not payload:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid or expired token"
+        )
 
-    submissions = query.all()
+    user_id = payload.get("user_id")
+
+    if not user_id:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid token"
+        )
+
+    submissions = db.query(Submission).filter(
+        Submission.user_id == user_id
+    ).all()
 
     results = []
 
@@ -117,7 +169,7 @@ def get_submissions(
         results.append({
             "id": submission.id,
             "content_type": submission.content_type,
-            "student_id": submission.student_id,
+            "user_id": submission.user_id,
             "student_class": submission.student_class,
             "heading": submission.heading,
             "description": submission.description,
@@ -130,14 +182,31 @@ def get_submissions(
     return results
 
 
-
 @router.get("/{submission_id}/media")
 def get_submission_media(
     submission_id: int,
+    credentials: HTTPAuthorizationCredentials = Depends(security),
     db: Session = Depends(get_db)
 ):
+    payload = decode_access_token(credentials.credentials)
+
+    if not payload:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid or expired token"
+        )
+
+    user_id = payload.get("user_id")
+
+    if not user_id:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid token"
+        )
+
     submission = db.query(Submission).filter(
-        Submission.id == submission_id
+        Submission.id == submission_id,
+        Submission.user_id == user_id
     ).first()
 
     if not submission:
