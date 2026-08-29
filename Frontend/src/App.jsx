@@ -1,6 +1,9 @@
 import { Routes, Route, Link } from 'react-router-dom'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
+import Dashboard from './pages/Dashboard'
+import Submit from './pages/Submit'
+import Profile from './pages/Profile'
 
 function Home() {
   return (
@@ -25,6 +28,9 @@ function App() {
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
+      <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/submit" element={<Submit />} />
+      <Route path="/profile" element={<Profile />} />
     </Routes>
   )
 }

@@ -181,6 +181,29 @@ def get_submissions(
 
     return results
 
+@router.get("/public")
+def get_public_submissions(
+    db: Session = Depends(get_db)
+):
+    submissions = db.query(Submission).all()
+
+    results = []
+
+    for submission in submissions:
+        results.append({
+            "id": submission.id,
+            "content_type": submission.content_type,
+            "student_class": submission.student_class,
+            "heading": submission.heading,
+            "description": submission.description,
+            "written_content": submission.written_content,
+            "media_url": submission.media_url,
+            "media_type": submission.media_type,
+            "created_at": submission.created_at,
+        })
+
+    return results
+
 
 @router.get("/{submission_id}/media")
 def get_submission_media(
