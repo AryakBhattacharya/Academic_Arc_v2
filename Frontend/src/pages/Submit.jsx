@@ -1,6 +1,14 @@
 import { useState } from 'react'
+import { Navigate } from 'react-router-dom'
 
 function Submit() {
+
+    const token = localStorage.getItem('access_token')
+
+    if (!token) {
+        return <Navigate to="/login" replace />
+    }
+
     const [contentType, setContentType] = useState('Writing')
     const [studentClass, setStudentClass] = useState('')
     const [heading, setHeading] = useState('')

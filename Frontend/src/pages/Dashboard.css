@@ -88,3 +88,9 @@
 .post-content small {
   opacity: 0.6;
 }
+
+.post-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}

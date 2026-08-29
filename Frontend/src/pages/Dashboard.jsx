@@ -3,8 +3,16 @@ import { Link } from 'react-router-dom'
 import './Dashboard.css'
 
 function Dashboard() {
+  const token = localStorage.getItem('access_token')
+
+  const logout = () => {
+    localStorage.removeItem('access_token')
+    window.location.href = '/'
+  }
+
   const [submissions, setSubmissions] = useState([])
-  const isLoggedIn = !!localStorage.getItem('access_token')
+
+  const isLoggedIn = !!token
 
   useEffect(() => {
     fetch('http://127.0.0.1:8000/submissions/public')
@@ -31,6 +39,7 @@ function Dashboard() {
             <>
               <Link to="/submit">Submit</Link>
               <Link to="/profile">Profile</Link>
+              <button onClick={logout}>Logout</button>
             </>
           ) : (
             <>
@@ -54,31 +63,36 @@ function Dashboard() {
         ) : (
           <div className="posts-grid">
             {submissions.map((submission) => (
-              <article className="post-card" key={submission.id}>
-                {submission.media_url && (
-                  <img
-                    className="post-image"
-                    src={submission.media_url}
-                    alt={submission.heading}
-                  />
-                )}
-
-                <div className="post-content">
-                  <h3>{submission.heading}</h3>
-
-                  {submission.description && (
-                    <p>{submission.description}</p>
+              <Link
+                to={`/post/${submission.id}`}
+                className="post-link"
+              >
+                <article className="post-card">
+                  {submission.media_url && (
+                    <img
+                      className="post-image"
+                      src={submission.media_url}
+                      alt={submission.heading}
+                    />
                   )}
 
-                  {submission.written_content && (
-                    <p>{submission.written_content}</p>
-                  )}
+                  <div className="post-content">
+                    <h3>{submission.heading}</h3>
 
-                  <small>
-                    {new Date(submission.created_at).toLocaleDateString()}
-                  </small>
-                </div>
-              </article>
+                    {submission.description && (
+                      <p>{submission.description}</p>
+                    )}
+
+                    {submission.written_content && (
+                      <p>{submission.written_content}</p>
+                    )}
+
+                    <small>
+                      {new Date(submission.created_at).toLocaleDateString()}
+                    </small>
+                  </div>
+                </article>
+              </Link>
             ))}
           </div>
         )}
