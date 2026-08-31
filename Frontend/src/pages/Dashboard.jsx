@@ -83,10 +83,6 @@ function Dashboard() {
                       <p>{submission.description}</p>
                     )}
 
-                    {submission.written_content && (
-                      <p>{submission.written_content}</p>
-                    )}
-
                     <small>
                       {new Date(submission.created_at).toLocaleDateString()}
                     </small>

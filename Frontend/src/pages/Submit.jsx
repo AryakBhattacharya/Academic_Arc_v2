@@ -95,7 +95,14 @@ function Submit() {
                 <label>Content Type</label>
                 <select
                     value={contentType}
-                    onChange={(e) => setContentType(e.target.value)}
+                    onChange={(e) => {
+                        const newType = e.target.value
+                        setContentType(newType)
+
+                        if (newType !== 'Writing' && newType !== 'Poem') {
+                            setWrittenContent('')
+                        }
+                    }}
                 >
                     <option value="Writing">Writing</option>
                     <option value="Drawing">Drawing</option>
@@ -133,14 +140,18 @@ function Submit() {
 
                 <br /><br />
 
-                <label>Written Content</label>
-                <textarea
-                    value={writtenContent}
-                    onChange={(e) => setWrittenContent(e.target.value)}
-                    rows="8"
-                />
+                {(contentType === 'Writing' || contentType === 'Poem') && (
+                    <>
+                        <label>Written Content</label>
+                        <textarea
+                            value={writtenContent}
+                            onChange={(e) => setWrittenContent(e.target.value)}
+                            rows="8"
+                        />
 
-                <br /><br />
+                        <br /><br />
+                    </>
+                )}
 
                 <label>Media</label>
                 <input
