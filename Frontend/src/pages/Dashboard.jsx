@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import './Dashboard.css'
 
@@ -10,20 +9,46 @@ function Dashboard() {
     window.location.href = '/'
   }
 
-  const [submissions, setSubmissions] = useState([])
-
   const isLoggedIn = !!token
 
-  useEffect(() => {
-    fetch('http://127.0.0.1:8000/submissions/public')
-      .then((response) => response.json())
-      .then((data) => {
-        setSubmissions(data)
-      })
-      .catch((error) => {
-        console.error('Error fetching submissions:', error)
-      })
-  }, [])
+  const categories = [
+    {
+      title: 'Writing',
+      description: 'Stories, essays & creative writing',
+      type: 'Writing',
+      number: '01',
+    },
+    {
+      title: 'Drawing',
+      description: 'Sketches, paintings & illustrations',
+      type: 'Drawing',
+      number: '02',
+    },
+    {
+      title: 'Poem',
+      description: 'Poetry & original compositions',
+      type: 'Poem',
+      number: '03',
+    },
+    {
+      title: 'Song',
+      description: 'Original songs & musical creations',
+      type: 'Song',
+      number: '04',
+    },
+    {
+      title: 'Instrumental',
+      description: 'Instrumental Performances',
+      type: 'Instrumental',
+      number: '05',
+    },
+    {
+      title: 'Dance',
+      description: 'Classical, contemporary & folk dance',
+      type: 'Dance',
+      number: '06',
+    },
+  ]
 
   return (
     <div className="magazine">
@@ -34,6 +59,10 @@ function Dashboard() {
 
         <div className="nav-links">
           <Link to="/">Home</Link>
+
+          <button className="language-button">
+            বাংলা
+          </button>
 
           {isLoggedIn ? (
             <>
@@ -50,48 +79,45 @@ function Dashboard() {
         </div>
       </nav>
 
-      <header className="magazine-header">
-        <h1>Academic Arc</h1>
-        <p>Student Magazine</p>
-      </header>
+      <main className="categories-section">
+        <div className="section-label">
+          • STUDENT CREATIVITY
+        </div>
 
-      <main className="posts-container">
-        <h2>Latest Posts</h2>
+        <h1>Where does your talent belong?</h1>
 
-        {submissions.length === 0 ? (
-          <p>No posts yet.</p>
-        ) : (
-          <div className="posts-grid">
-            {submissions.map((submission) => (
-              <Link
-                to={`/post/${submission.id}`}
-                className="post-link"
-              >
-                <article className="post-card">
-                  {submission.media_url && (
-                    <img
-                      className="post-image"
-                      src={submission.media_url}
-                      alt={submission.heading}
-                    />
-                  )}
+        <p className="section-description">
+          Share your creative work and reach readers, artists and
+          audiences who appreciate student talent.
+        </p>
 
-                  <div className="post-content">
-                    <h3>{submission.heading}</h3>
+        <div className="categories-grid">
+          {categories.map((category) => (
+            <Link
+              key={category.type}
+              to={`/category/${encodeURIComponent(category.type)}`}
+              className={`category-card category-${category.number}`}
+            >
+              <div className="category-number">
+                {category.number}
+              </div>
 
-                    {submission.description && (
-                      <p>{submission.description}</p>
-                    )}
+              <div className="category-content">
+                <span className="category-type">
+                  {category.type}
+                </span>
 
-                    <small>
-                      {new Date(submission.created_at).toLocaleDateString()}
-                    </small>
-                  </div>
-                </article>
-              </Link>
-            ))}
-          </div>
-        )}
+                <h2>{category.title}</h2>
+
+                <p>{category.description}</p>
+
+                <span className="category-link">
+                  Explore →
+                </span>
+              </div>
+            </Link>
+          ))}
+        </div>
       </main>
     </div>
   )

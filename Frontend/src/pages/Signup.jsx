@@ -1,165 +1,434 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import './Signup.css'
 
 function Signup() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    password: '',
-    is_student: true,
-    dob: '',
-    school: '',
-    student_class: '',
-  })
+    const navigate = useNavigate()
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target
-
-    setFormData({
-      ...formData,
-      [name]: type === 'checkbox' ? checked : value,
+    const [formData, setFormData] = useState({
+        name: '',
+        email: '',
+        phone: '',
+        password: '',
+        confirmPassword: '',
+        is_student: true,
+        dob: '',
+        school: '',
+        student_class: '',
     })
-  }
 
-  const handleSignup = async (e) => {
-    e.preventDefault()
+    const [showPassword, setShowPassword] = useState(false)
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
-    try {
-        const dataToSend = {
-        ...formData,
-        }
+    const handleChange = (e) => {
+        const { name, value } = e.target
 
-        if (!formData.is_student) {
-            delete dataToSend.school
-            delete dataToSend.student_class
-        }
-
-        const response = await fetch('http://127.0.0.1:8000/auth/signup', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(dataToSend),
+        setFormData({
+            ...formData,
+            [name]: value,
         })
+    }
 
-        const data = await response.json()
+    const handleStudentChange = (value) => {
+        setFormData({
+            ...formData,
+            is_student: value,
+        })
+    }
 
-        console.log(data)
+    const handleSignup = async (e) => {
+        e.preventDefault()
 
-        if (!response.ok) {
-            alert(data.detail || 'Signup failed')
+        if (formData.password !== formData.confirmPassword) {
+            alert('Passwords do not match')
             return
         }
 
-        alert('Signup successful!')
-    }   catch (error) {
-        console.error(error)
-        alert('Could not connect to the backend')
+        try {
+            const dataToSend = {
+                name: formData.name,
+                email: formData.email,
+                phone: formData.phone,
+                password: formData.password,
+                is_student: formData.is_student,
+                dob: formData.dob,
+            }
+
+            if (formData.is_student) {
+                dataToSend.school = formData.school
+                dataToSend.student_class = formData.student_class
+            }
+
+            const response = await fetch(
+                'http://127.0.0.1:8000/auth/signup',
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(dataToSend),
+                }
+            )
+
+            const data = await response.json()
+
+            console.log(data)
+
+            if (!response.ok) {
+                alert(data.detail || 'Signup failed')
+                return
+            }
+
+            alert('Signup successful!')
+            navigate('/login')
+        } catch (error) {
+            console.error(error)
+            alert('Could not connect to the backend')
+        }
     }
-}
 
-  return (
-    <div>
-      <h1>Sign Up</h1>
+    return (
+        <div className="signup-page">
 
-      <form onSubmit={handleSignup}>
-        <div>
-          <label>Name</label>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            required
-          />
-        </div>
+            {/* LEFT SIDE */}
+            <div className="signup-left">
 
-        <div>
-          <label>Email</label>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-        </div>
+                <div className="signup-left-content">
 
-        <div>
-          <label>Phone Number</label>
-          <input
-            type="tel"
-            name="phone"
-            value={formData.phone}
-            onChange={handleChange}
-            required
-          />
-        </div>
+                    <div className="signup-quote-mark">"</div>
 
-        <div>
-          <label>Password</label>
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-        </div>
+                    <h2>
+                        Education is the foundation of Society.
+                    </h2>
 
-        <div>
-          <label>
-            <input
-              type="checkbox"
-              name="is_student"
-              checked={formData.is_student}
-              onChange={handleChange}
-            />
-            I am a student
-          </label>
-        </div>
+                    <div className="signup-stats">
 
-        <div>
-          <label>Date of Birth</label>
-          <input
-            type="date"
-            name="dob"
-            value={formData.dob}
-            onChange={handleChange}
-            required
-          />
-        </div>
+                        <div className="signup-stat-card">
+                            <strong>1,240+</strong>
+                            <span>Writings Published</span>
+                        </div>
 
-        {formData.is_student && (
-          <>
-            <div>
-              <label>School</label>
-              <input
-                type="text"
-                name="school"
-                value={formData.school}
-                onChange={handleChange}
-                required
-              />
+                        <div className="signup-stat-card">
+                            <strong>86</strong>
+                            <span>Schools</span>
+                        </div>
+
+                        <div className="signup-stat-card">
+                            <strong>36</strong>
+                            <span>Total</span>
+                        </div>
+
+                    </div>
+
+                </div>
+
             </div>
 
-            <div>
-              <label>Class</label>
-              <input
-                type="text"
-                name="student_class"
-                value={formData.student_class}
-                onChange={handleChange}
-                required
-              />
-            </div>
-          </>
-        )}
 
-        <button type="submit">Sign Up</button>
-      </form>
-    </div>
-  )
+            {/* RIGHT SIDE */}
+            <div className="signup-right">
+
+                  <button
+                      type="button"
+                      className="auth-home-button"
+                      onClick={() => navigate('/')}
+                  >
+                      ← Go Back
+                  </button>
+
+                <div className="signup-container">
+
+                    <h1>Join Us Today!</h1>
+
+                    <p className="signup-subtitle">
+                        Create an account and share your writing
+                    </p>
+
+
+                    {/* Login / Signup tabs */}
+                    <div className="auth-tabs">
+
+                        <button
+                            type="button"
+                            className="auth-tab"
+                            onClick={() => navigate('/login')}
+                        >
+                            Login
+                        </button>
+
+                        <button
+                            type="button"
+                            className="auth-tab active"
+                        >
+                            Sign Up
+                        </button>
+
+                    </div>
+
+
+                    <form onSubmit={handleSignup}>
+
+                        {/* Full Name */}
+                        <div className="signup-field">
+                            <label>
+                                Full Name
+                                <span className="required">*</span>
+                            </label>
+
+                            <input
+                                type="text"
+                                name="name"
+                                value={formData.name}
+                                onChange={handleChange}
+                                placeholder="Enter your full name"
+                                required
+                            />
+                        </div>
+
+
+                        {/* Student status */}
+                        <div className="signup-field">
+                            <label>
+                                Are you a student?
+                                <span className="required">*</span>
+                            </label>
+
+                            <div className="student-options">
+
+                                <button
+                                    type="button"
+                                    className={
+                                        formData.is_student
+                                            ? 'student-option selected'
+                                            : 'student-option'
+                                    }
+                                    onClick={() =>
+                                        handleStudentChange(true)
+                                    }
+                                >
+                                    Yes, I'm a student
+                                </button>
+
+                                <button
+                                    type="button"
+                                    className={
+                                        !formData.is_student
+                                            ? 'student-option selected'
+                                            : 'student-option'
+                                    }
+                                    onClick={() =>
+                                        handleStudentChange(false)
+                                    }
+                                >
+                                    No, I'm not
+                                </button>
+
+                            </div>
+                        </div>
+
+
+                        {/* Student-only fields */}
+                        {formData.is_student && (
+                            <div className="signup-row">
+
+                                <div className="signup-field">
+                                    <label>
+                                        Class
+                                        <span className="required">*</span>
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        name="student_class"
+                                        value={formData.student_class}
+                                        onChange={handleChange}
+                                        placeholder="Enter your class"
+                                        required
+                                    />
+                                </div>
+
+                                <div className="signup-field">
+                                    <label>
+                                        School
+                                        <span className="required">*</span>
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        name="school"
+                                        value={formData.school}
+                                        onChange={handleChange}
+                                        placeholder="Enter your school"
+                                        required
+                                    />
+                                </div>
+
+                            </div>
+                        )}
+
+
+                        {/* Email */}
+                        <div className="signup-field">
+                            <label>
+                                Email
+                                <span className="required">*</span>
+                            </label>
+
+                            <input
+                                type="email"
+                                name="email"
+                                value={formData.email}
+                                onChange={handleChange}
+                                placeholder="your@email.com"
+                                required
+                            />
+                        </div>
+
+
+                        {/* Phone + DOB */}
+                        <div className="signup-row">
+
+                            <div className="signup-field">
+                                <label>
+                                    Phone Number
+                                    <span className="required">*</span>
+                                </label>
+
+                                <input
+                                    type="tel"
+                                    name="phone"
+                                    value={formData.phone}
+                                    onChange={handleChange}
+                                    placeholder="Enter phone number"
+                                    required
+                                />
+                            </div>
+
+                            <div className="signup-field">
+                                <label>
+                                    Date of Birth
+                                    <span className="required">*</span>
+                                </label>
+
+                                <input
+                                    type="date"
+                                    name="dob"
+                                    value={formData.dob}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </div>
+
+                        </div>
+
+
+                        {/* Password + Confirm Password */}
+                        <div className="signup-row">
+
+                            <div className="signup-field">
+                                <label>
+                                    Password
+                                    <span className="required">*</span>
+                                </label>
+
+                                <div className="password-wrapper">
+                                    <input
+                                        type={
+                                            showPassword
+                                                ? 'text'
+                                                : 'password'
+                                        }
+                                        name="password"
+                                        value={formData.password}
+                                        onChange={handleChange}
+                                        placeholder="Enter password"
+                                        required
+                                    />
+
+                                    <button
+                                        type="button"
+                                        className="password-toggle"
+                                        onClick={() =>
+                                            setShowPassword(!showPassword)
+                                        }
+                                    >
+                                        {showPassword ? '◉' : '◌'}
+                                    </button>
+                                </div>
+                            </div>
+
+
+                            <div className="signup-field">
+                                <label>
+                                    Confirm Password
+                                    <span className="required">*</span>
+                                </label>
+
+                                <div className="password-wrapper">
+                                    <input
+                                        type={
+                                            showConfirmPassword
+                                                ? 'text'
+                                                : 'password'
+                                        }
+                                        name="confirmPassword"
+                                        value={formData.confirmPassword}
+                                        onChange={handleChange}
+                                        placeholder="Confirm password"
+                                        required
+                                    />
+
+                                    <button
+                                        type="button"
+                                        className="password-toggle"
+                                        onClick={() =>
+                                            setShowConfirmPassword(
+                                                !showConfirmPassword
+                                            )
+                                        }
+                                    >
+                                        {showConfirmPassword ? '◉' : '◌'}
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                        <p className="terms-text">
+                            By signing up, you agree to our{' '}
+                            <span>Terms of Use</span> and{' '}
+                            <span>Privacy Policy</span>.
+                        </p>
+
+
+                        <button
+                            type="submit"
+                            className="signup-button"
+                        >
+                            Create Account
+                        </button>
+
+                    </form>
+
+
+                    <p className="login-prompt">
+                        Already have an account?
+
+                        <button
+                            type="button"
+                            onClick={() => navigate('/login')}
+                        >
+                            Login
+                        </button>
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+    )
 }
 
 export default Signup
