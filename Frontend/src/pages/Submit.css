@@ -1,0 +1,605 @@
+.submit-page {
+    min-height: 100vh;
+    padding: 0 clamp(24px, 8vw, 250px) 80px;
+
+    background: #f2f0ea;
+
+    padding: 0 20px 45px;
+
+    box-sizing: border-box;
+
+    font-family: Arial , sans-serif;
+}
+
+.submit-card {
+    width: 100%;
+    max-width: 900px;
+
+    margin: 0 auto;
+
+    background: #ffffff;
+
+    border-radius: 18px;
+
+    padding: 42px 38px;
+
+    box-sizing: border-box;
+
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+}
+
+
+/* =========================
+   NAV BAR
+   ========================= */
+
+
+.submit-navbar {
+    margin: 0 clamp(24px, 8vw, 250px) 30px;
+    padding: 25px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(216, 138, 53, .6);
+}
+
+.subnav-logo {
+    color: #d88a35;
+    font-size: 22px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.subnav-links {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+.subnav-links a {
+    color: #d88a35;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.subnav-links a:hover {
+    color: #dc7615;
+    text-decoration: underline;
+    font-weight: bold;
+}
+
+.subnav-links button {
+    background: transparent;
+    border: none;
+    color: #d88a35;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.language-button {
+    padding: 7px 14px !important;
+
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    border-radius: 20px;
+}
+
+
+/* =========================
+   HEADING
+   ========================= */
+
+.submit-heading {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    margin-bottom: 35px;
+}
+
+.section-icon {
+    color: #dc7615;
+
+    font-size: 23px;
+}
+
+.submit-heading h1 {
+    margin: 0;
+
+    color: #20201e;
+
+    font-size: 25px;
+    font-weight: 700;
+}
+
+
+/* =========================
+   SECTIONS
+   ========================= */
+
+.submit-section {
+    margin-bottom: 35px;
+}
+
+.section-title {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    margin-bottom: 20px;
+}
+
+.section-title span {
+    color: #dc7615;
+
+    font-size: 21px;
+}
+
+.section-title h2 {
+    margin: 0;
+
+    color: #20201e;
+
+    font-size: 20px;
+    font-weight: 700;
+}
+
+
+/* =========================
+   FORM FIELDS
+   ========================= */
+
+.form-field {
+    margin-bottom: 18px;
+}
+
+.form-field label {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: #292927;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.required {
+    color: #dc7615;
+
+    margin-left: 4px;
+}
+
+.form-field input,
+.form-field textarea {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    border: 1px solid #d5d1c9;
+    border-radius: 12px;
+
+    background: #f0eee9;
+
+    padding: 12px 14px;
+
+    color: #292927;
+
+    font-family: inherit;
+    font-size: 14px;
+
+    outline: none;
+}
+
+.form-field input {
+    height: 44px;
+}
+
+.form-field textarea {
+    resize: vertical;
+
+    min-height: 90px;
+
+    line-height: 1.5;
+}
+
+.form-field input:focus,
+.form-field textarea:focus {
+    border-color: #dc7615;
+
+    background: #f8f6f1;
+}
+
+.character-count {
+    margin-top: 5px;
+
+    color: #99958e;
+
+    font-size: 11px;
+}
+
+
+/* =========================
+   CONTENT TYPES
+   ========================= */
+
+.content-types {
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 10px;
+}
+
+.content-type {
+    min-height: 62px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 9px 13px;
+
+    border: 1px solid #d5d1c9;
+    border-radius: 12px;
+
+    background: #f0eee9;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    transition: 0.15s ease;
+}
+
+.content-type:hover {
+    border-color: #dc7615;
+}
+
+.content-type.selected {
+    border-color: #dc7615;
+
+    background: #fff7ed;
+}
+
+.type-icon {
+    color: #dc7615;
+
+    font-size: 20px;
+
+    flex-shrink: 0;
+}
+
+.content-type strong {
+    display: block;
+
+    color: #292927;
+
+    font-size: 13px;
+}
+
+.content-type small {
+    display: block;
+
+    margin-top: 3px;
+
+    color: #77736d;
+
+    font-size: 11px;
+}
+
+
+/* =========================
+   UPLOAD
+   ========================= */
+
+.upload-divider {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    margin: 5px 0 18px;
+
+    color: #8b8780;
+
+    font-size: 12px;
+}
+
+.upload-divider::before,
+.upload-divider::after {
+    content: "";
+
+    flex: 1;
+
+    height: 1px;
+
+    background: #e1ded7;
+}
+
+.upload-box {
+    min-height: 180px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    box-sizing: border-box;
+
+    border: 2px dashed #d5d1c9;
+    border-radius: 15px;
+
+    background: #f5f3ee;
+
+    text-align: center;
+
+    cursor: pointer;
+
+    padding: 25px;
+}
+
+.upload-box:hover {
+    border-color: #dc7615;
+
+    background: #faf8f3;
+}
+
+.upload-box input {
+    display: none;
+}
+
+.upload-icon {
+    margin-bottom: 8px;
+
+    color: #77736d;
+
+    font-size: 30px;
+}
+
+.upload-box strong {
+    color: #292927;
+
+    font-size: 14px;
+}
+
+.upload-box span {
+    margin-top: 6px;
+
+    color: #8b8780;
+
+    font-size: 11px;
+}
+
+.upload-box small {
+    margin-top: 8px;
+
+    color: #dc7615;
+
+    font-size: 11px;
+}
+
+.external-media {
+    margin-top: 18px;
+}
+
+.external-media-row {
+    display: flex;
+    gap: 10px;
+}
+
+.external-media-row input {
+    flex: 1;
+
+    height: 44px;
+
+    box-sizing: border-box;
+
+    border: 1px solid #d5d1c9;
+    border-radius: 12px;
+
+    background: #f0eee9;
+
+    padding: 0 14px;
+
+    font-family: inherit;
+    font-size: 14px;
+
+    outline: none;
+}
+
+.external-media-row select {
+    width: 130px;
+
+    height: 44px;
+
+    box-sizing: border-box;
+
+    border: 1px solid #d5d1c9;
+    border-radius: 12px;
+
+    background: #f0eee9;
+
+    padding: 0 12px;
+
+    color: #292927;
+
+    font-family: inherit;
+    font-size: 13px;
+
+    outline: none;
+}
+
+.external-media-row input:focus,
+.external-media-row select:focus {
+    border-color: #dc7615;
+}
+
+.external-media > small {
+    display: block;
+
+    margin-top: 7px;
+
+    color: #dc7615;
+
+    font-size: 11px;
+}
+
+
+/* =========================
+   PRIVACY
+   ========================= */
+
+.privacy-notice {
+    display: flex;
+
+    gap: 12px;
+
+    margin-top: 20px;
+
+    padding: 13px 15px;
+
+    box-sizing: border-box;
+
+    border: 1px solid #c8ddd5;
+    border-radius: 13px;
+
+    background: #eef6f2;
+}
+
+.privacy-notice > span {
+    color: #347963;
+
+    font-size: 18px;
+}
+
+.privacy-notice p {
+    margin: 0;
+
+    color: #347963;
+
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+
+/* =========================
+   CONSENT
+   ========================= */
+
+.consent {
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 10px;
+
+    margin-top: 18px;
+
+    color: #77736d;
+
+    font-size: 12px;
+
+    line-height: 1.5;
+
+    cursor: pointer;
+}
+
+.consent input {
+    width: 18px;
+    height: 18px;
+
+    flex-shrink: 0;
+
+    accent-color: #dc7615;
+}
+
+
+/* =========================
+   FOOTER / SUBMIT
+   ========================= */
+
+.submit-footer {
+    padding-top: 20px;
+
+    border-top: 1px solid #e1ded7;
+}
+
+.submit-button {
+    height: 44px;
+
+    padding: 0 28px;
+
+    border: none;
+    border-radius: 11px;
+
+    background: #dc7615;
+
+    color: #ffffff;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.submit-button:hover {
+    background: #c96910;
+}
+
+.submit-message {
+    margin: 18px 0 0;
+
+    color: #347963;
+
+    font-size: 13px;
+}
+
+
+/* =========================
+   RESPONSIVE
+   ========================= */
+
+@media (max-width: 700px) {
+
+    .submit-page {
+        padding: 20px 12px;
+    }
+
+    .submit-card {
+        padding: 28px 20px;
+
+        border-radius: 14px;
+    }
+
+    .content-types {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .external-media-row {
+        flex-direction: column;
+    }
+
+    .external-media-row select {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+
+    .content-types {
+        grid-template-columns: 1fr;
+    }
+
+    .submit-heading h1 {
+        font-size: 22px;
+    }
+
+    .section-title h2 {
+        font-size: 18px;
+    }
+}

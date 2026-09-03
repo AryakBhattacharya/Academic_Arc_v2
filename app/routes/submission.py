@@ -17,12 +17,43 @@ from app.services.auth import get_current_user, decode_access_token
 from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
+from urllib.parse import urlparse
+
 router = APIRouter(
     prefix="/submissions",
     tags=["Submissions"]
 )
 
 security = HTTPBearer()
+
+ALLOWED_EXTERNAL_DOMAINS = {
+    "youtube.com",
+    "www.youtube.com",
+    "youtu.be",
+    "facebook.com",
+    "www.facebook.com",
+    "fb.watch",
+    "drive.google.com",
+}
+
+def validate_external_url(url: str) -> bool:
+    try:
+        parsed = urlparse(url)
+
+        if parsed.scheme not in {"http", "https"}:
+            return False
+
+        hostname = parsed.hostname
+
+        if not hostname:
+            return False
+
+        hostname = hostname.lower()
+
+        return hostname in ALLOWED_EXTERNAL_DOMAINS
+
+    except Exception:
+        return False
 
 
 @router.post("/")
@@ -46,6 +77,21 @@ def create_submission(
             status_code=401,
             detail="Invalid token"
         )
+
+    if submission_data.media_url:
+        if not validate_external_url(submission_data.media_url):
+            raise HTTPException(
+                status_code=400,
+                detail="Only YouTube, Facebook, and Google Drive links are allowed."
+            )
+
+        allowed_media_types = {"video", "image", "audio", "pdf"}
+
+        if submission_data.media_type not in allowed_media_types:
+            raise HTTPException(
+                status_code=400,
+                detail="Invalid external media type."
+            )
 
     new_submission = Submission(
         content_type=submission_data.content_type,
@@ -100,6 +146,12 @@ async def upload_submission_file(
         raise HTTPException(
             status_code=404,
             detail="Submission not found"
+        )
+
+    if submission.media_url:
+        raise HTTPException(
+            status_code=400,
+            detail="This submission already has media attached."
         )
 
     # Get file extension
@@ -242,6 +294,12 @@ def get_submission_media(
         raise HTTPException(
             status_code=404,
             detail="No media found for this submission"
+        )
+
+    if submission.media_type == "external":
+        raise HTTPException(
+            status_code=400,
+            detail="This submission uses an external media link."
         )
 
     file_name = submission.media_url.split("/")[-1]
