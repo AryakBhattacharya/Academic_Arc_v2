@@ -1,5 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from sqlalchemy.orm import Session
+
+import uuid
+from app.supabase import supabase
 
 from app.models.student import Student
 
@@ -220,4 +223,78 @@ def update_profile(
 
     return {
         "message": "Profile updated successfully"
+    }
+
+@router.post("/profile-picture")
+async def upload_profile_picture(
+    file: UploadFile = File(...),
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+    db: Session = Depends(get_db)
+):
+    payload = decode_access_token(credentials.credentials)
+
+    if not payload:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid or expired token"
+        )
+
+    user_id = payload.get("user_id")
+
+    if not user_id:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid token"
+        )
+
+    user = (
+        db.query(User)
+        .filter(User.id == user_id)
+        .first()
+    )
+
+    if not user:
+        raise HTTPException(
+            status_code=404,
+            detail="User not found"
+        )
+
+    allowed_types = {
+        "image/jpeg",
+        "image/png",
+        "image/webp"
+    }
+
+    if file.content_type not in allowed_types:
+        raise HTTPException(
+            status_code=400,
+            detail="Only JPG, PNG, and WebP images are allowed."
+        )
+
+    file_extension = file.filename.split(".")[-1].lower()
+    file_name = f"{user_id}_{uuid.uuid4()}.{file_extension}"
+
+    file_bytes = await file.read()
+
+    supabase.storage.from_("profile-pictures").upload(
+        path=file_name,
+        file=file_bytes,
+        file_options={
+            "content-type": file.content_type,
+            "upsert": "true"
+        }
+    )
+
+    public_url = supabase.storage.from_(
+        "profile-pictures"
+    ).get_public_url(file_name)
+
+    user.profile_picture = public_url
+
+    db.commit()
+    db.refresh(user)
+
+    return {
+        "message": "Profile picture uploaded successfully",
+        "profile_picture": public_url
     }

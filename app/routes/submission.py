@@ -228,6 +228,7 @@ def get_submissions(
             "written_content": submission.written_content,
             "media_url": submission.media_url,
             "media_type": submission.media_type,
+            "status": submission.status,
             "created_at": submission.created_at
         })
 
