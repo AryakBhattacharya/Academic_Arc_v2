@@ -14,7 +14,7 @@
 
 /* NAVBAR */
 
-.navbar {
+.dashboard-navbar {
   /*max-width: 1400px;*/
   margin: 0 auto 110px;
   padding: 25px 0;
@@ -24,30 +24,30 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
 
-.nav-logo {
+.dashboard-nav-logo {
   color: #f5f2ed;
   font-size: 22px;
   font-weight: 700;
   text-decoration: none;
 }
 
-.nav-links {
+.dashboard-nav-links {
   display: flex;
   align-items: center;
   gap: 25px;
 }
 
-.nav-links a {
+.dashboard-nav-links a {
   color: #d8d4ce;
   text-decoration: none;
   font-size: 14px;
 }
 
-.nav-links a:hover {
+.dashboard-nav-links a:hover {
   color: #ffffff;
 }
 
-.nav-links button {
+.dashboard-nav-links button {
   background: transparent;
   border: none;
   color: #d8d4ce;

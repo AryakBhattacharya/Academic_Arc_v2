@@ -1,6 +1,5 @@
 .submit-page {
     min-height: 100vh;
-    padding: 0 clamp(24px, 8vw, 250px) 80px;
 
     background: #f2f0ea;
 
@@ -34,7 +33,7 @@
    ========================= */
 
 
-.submit-navbar {
+.navbar {
     margin: 0 clamp(24px, 6vw, 250px) 30px;
     padding: 25px 0;
     display: flex;
@@ -43,44 +42,37 @@
     border-bottom: 1px solid rgba(216, 138, 53, .6);
 }
 
-.subnav-logo {
+.nav-logo {
     color: #d88a35;
     font-size: 22px;
     font-weight: 700;
     text-decoration: none;
 }
 
-.subnav-links {
+.nav-links {
     display: flex;
     align-items: center;
     gap: 25px;
 }
 
-.subnav-links a {
+.nav-links a {
     color: #d88a35;
     text-decoration: none;
     font-size: 14px;
 }
 
-.subnav-links a:hover {
+.nav-links a:hover {
     color: #dc7615;
     text-decoration: underline;
     font-weight: bold;
 }
 
-.subnav-links button {
+.nav-links button {
     background: transparent;
     border: none;
     color: #d88a35;
     font-size: 14px;
     cursor: pointer;
-}
-
-.language-button {
-    padding: 7px 14px !important;
-
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
-    border-radius: 20px;
 }
 
 

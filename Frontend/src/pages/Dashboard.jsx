@@ -52,12 +52,12 @@ function Dashboard() {
 
   return (
     <div className="magazine">
-      <nav className="navbar">
-        <Link to="/" className="nav-logo">
+      <nav className="dashboard-navbar">
+        <Link to="/" className="dashboard-nav-logo">
           Academic Arc
         </Link>
 
-        <div className="nav-links">
+        <div className="dashboard-nav-links">
           <Link to="/">Home</Link>
 
           <button className="language-button">

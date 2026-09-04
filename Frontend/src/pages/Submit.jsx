@@ -127,25 +127,25 @@ function Submit() {
     return (
         <div className="submit-page">
 
-            <nav className="submit-navbar">
+            <nav className="navbar">
 
-                <Link to="/" className="subnav-logo">
+                <Link to="/" className="nav-logo">
                     Academic Arc
                 </Link>
 
-                <div className="subnav-links">
+                <div className="nav-links">
 
                     <Link to="/">Home</Link>
+                    
+                    <Link to="/profile">Profile</Link>
 
-                    <button className="language-button">
+                    {/*<button className="language-button">
                         বাংলা
                     </button>
 
-                    <Link to="/profile">Profile</Link>
-
                     <button onClick={logout}>
                         Logout
-                    </button>
+                    </button>*/}
 
                 </div>
 

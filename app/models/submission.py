@@ -11,8 +11,6 @@ class Submission(Base):
 
     content_type = Column(String(50), nullable=False)
 
-    status = Column(String(20), nullable=False, default="pending")
-
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
 
     student_class = Column(String(50), nullable=False)
