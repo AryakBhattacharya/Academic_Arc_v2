@@ -39,3 +39,19 @@ class UserSignup(BaseModel):
 class UserLogin(BaseModel):
     identifier: str
     password: str
+
+class UserProfileUpdate(BaseModel):
+    name: str = Field(
+        min_length=2,
+        max_length=100
+    )
+
+    district: str | None = Field(
+        default=None,
+        max_length=100
+    )
+
+    village_locality: str | None = Field(
+        default=None,
+        max_length=200
+    )

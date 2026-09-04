@@ -5,7 +5,7 @@ from app.models.student import Student
 
 from app.database import get_db
 from app.models.user import User
-from app.schemas.user import UserSignup, UserLogin
+from app.schemas.user import UserSignup, UserLogin, UserProfileUpdate
 
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from app.models.student import Student
@@ -165,10 +165,59 @@ def get_current_user(
         "email": user.email,
         "phone": user.phone,
         "is_student": user.is_student,
+        "profile_picture": user.profile_picture,
+        "district": user.district,
+        "village_locality": user.village_locality,
+        "created_at": user.created_at,
         "student": {
             "student_id": student.id,
             "dob": student.dob,
             "school": student.school,
             "student_class": student.student_class
         } if student else None
+    }
+
+@router.put("/profile")
+def update_profile(
+    profile_data: UserProfileUpdate,
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+    db: Session = Depends(get_db)
+):
+    payload = decode_access_token(credentials.credentials)
+
+    if not payload:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid or expired token"
+        )
+
+    user_id = payload.get("user_id")
+
+    if not user_id:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid token"
+        )
+
+    user = (
+        db.query(User)
+        .filter(User.id == user_id)
+        .first()
+    )
+
+    if not user:
+        raise HTTPException(
+            status_code=404,
+            detail="User not found"
+        )
+
+    user.name = profile_data.name
+    user.district = profile_data.district
+    user.village_locality = profile_data.village_locality
+
+    db.commit()
+    db.refresh(user)
+
+    return {
+        "message": "Profile updated successfully"
     }
