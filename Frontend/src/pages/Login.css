@@ -262,11 +262,16 @@
 
 .password-toggle {
     position: absolute;
-
     right: 12px;
     top: 50%;
-
     transform: translateY(-50%);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 28px;
+    height: 28px;
 
     border: none;
     background: transparent;
@@ -274,8 +279,11 @@
     color: #77736d;
 
     cursor: pointer;
+    padding: 0;
+}
 
-    font-size: 17px;
+.password-toggle:hover {
+    color: #292927;
 }
 
 
