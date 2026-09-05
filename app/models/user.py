@@ -1,7 +1,8 @@
 from datetime import datetime
 
-from sqlalchemy import Boolean, DateTime, String
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import Boolean, Date, DateTime, String
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from datetime import date, datetime
 
 from app.database import Base
 
@@ -59,8 +60,19 @@ class User(Base):
         nullable=True
     )
 
+    dob: Mapped[datetime | None] = mapped_column(
+        Date,
+        nullable=True
+    )
+
     created_at: Mapped[datetime] = mapped_column(
         DateTime,
         default=datetime.utcnow,
         nullable=False
+    )
+
+    student = relationship(
+        "Student",
+        back_populates="user",
+        uselist=False
     )
