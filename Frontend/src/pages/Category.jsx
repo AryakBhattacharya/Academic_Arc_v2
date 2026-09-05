@@ -27,15 +27,29 @@ function Category() {
   return (
     <div className="category-page">
 
-      <nav className="category-navbar">
-        <Link to="/" className="category-logo">
-          Academic Arc
-        </Link>
+      <nav className="navbar">
 
-        <Link to="/" className="category-home">
-          Home
-        </Link>
-      </nav>
+                <Link to="/" className="nav-logo">
+                    Academic Arc
+                </Link>
+
+                <div className="nav-links">
+
+                    <Link to="/">Home</Link>
+                    
+                    <Link to="/profile">Profile</Link>
+
+                    {/*<button className="language-button">
+                        বাংলা
+                    </button>
+
+                    <button onClick={logout}>
+                        Logout
+                    </button>*/}
+
+                </div>
+
+            </nav>
 
       <main className="category-container">
 
@@ -52,16 +66,47 @@ function Category() {
             No {categoryName.toLowerCase()} submissions yet.
           </p>
         ) : (
-          <div className="submission-grid">
+          <div className="submission-feed">
 
             {submissions.map((submission) => (
               <Link
                 key={submission.id}
                 to={`/post/${submission.id}`}
-                className={`submission-card ${
-                  submission.media_url ? 'has-image' : 'no-image'
-                }`}
+                className="submission-card"
               >
+
+                <div className="submission-header">
+
+                  <div className="submission-avatar">
+                    {submission.student_name
+                      ? submission.student_name.charAt(0).toUpperCase()
+                      : 'S'}
+                  </div>
+
+                  <div className="submission-meta">
+
+                    <strong>
+                      {submission.student_name}
+                    </strong>
+
+                    <span>
+                      Class {submission.student_class} • {submission.school}
+                    </span>
+
+                    <small>
+                      {submission.created_at &&
+                        new Date(submission.created_at).toLocaleDateString('en-IN', {
+                          day: 'numeric',
+                          month: 'short',
+                          year: 'numeric'
+                        })}
+                    </small>
+
+                  </div>
+
+                  <span className="submission-menu">•••</span>
+
+                </div>
 
                 {submission.media_url && (
                   <div className="submission-image">

@@ -11,7 +11,10 @@ from app.supabase import supabase
 from app.database import get_db
 from app.models.submission import Submission
 from app.schemas.submission import SubmissionCreate
+
 from app.models.user import User
+from app.models.student import Student
+
 from app.services.auth import get_current_user, decode_access_token
 
 from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
@@ -237,15 +240,21 @@ def get_submissions(
 def get_public_submissions(
     db: Session = Depends(get_db)
 ):
-    submissions = db.query(Submission).all()
+    submissions = (
+        db.query(Submission, Student)
+        .join(Student, Student.user_id == Submission.user_id)
+        .all()
+    )
 
     results = []
 
-    for submission in submissions:
+    for submission, student in submissions:
         results.append({
             "id": submission.id,
             "content_type": submission.content_type,
+            "student_name": student.name,
             "student_class": submission.student_class,
+            "school": student.school,
             "heading": submission.heading,
             "description": submission.description,
             "written_content": submission.written_content,
