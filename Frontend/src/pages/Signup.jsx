@@ -75,7 +75,8 @@ function Signup() {
             console.log(data)
 
             if (!response.ok) {
-                alert(data.detail || 'Signup failed')
+                console.error('Signup error:', data)
+                alert(JSON.stringify(data.detail, null, 2))
                 return
             }
 

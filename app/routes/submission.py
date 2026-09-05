@@ -252,7 +252,7 @@ def get_public_submissions(
         results.append({
             "id": submission.id,
             "content_type": submission.content_type,
-            "student_name": student.name,
+            "student_name": student.user.name,
             "student_class": submission.student_class,
             "school": student.school,
             "heading": submission.heading,
