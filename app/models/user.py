@@ -1,8 +1,7 @@
-from datetime import datetime
+from datetime import date, datetime
 
 from sqlalchemy import Boolean, Date, DateTime, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from datetime import date, datetime
 
 from app.database import Base
 
@@ -60,7 +59,7 @@ class User(Base):
         nullable=True
     )
 
-    dob: Mapped[datetime | None] = mapped_column(
+    dob: Mapped[date | None] = mapped_column(
         Date,
         nullable=True
     )

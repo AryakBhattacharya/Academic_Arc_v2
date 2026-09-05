@@ -21,8 +21,7 @@ def create_student(
     db: Session = Depends(get_db)
 ):
     new_student = Student(
-        name=student_data.name,
-        dob=student_data.dob,
+        user_id=student_data.user_id,
         school=student_data.school,
         student_class=student_data.student_class
     )

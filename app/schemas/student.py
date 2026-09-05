@@ -4,7 +4,6 @@ from pydantic import BaseModel
 
 
 class StudentCreate(BaseModel):
-    name: str
-    dob: date
+    user_id: int
     school: str
     student_class: str

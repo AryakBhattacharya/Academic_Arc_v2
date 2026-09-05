@@ -4,8 +4,6 @@ from sqlalchemy.orm import Session
 import uuid
 from app.supabase import supabase
 
-from app.models.student import Student
-
 from app.database import get_db
 from app.models.user import User
 from app.schemas.user import UserSignup, UserLogin, UserProfileUpdate
@@ -49,6 +47,7 @@ def signup(
         email=user_data.email,
         phone=user_data.phone,
         is_student=user_data.is_student,
+        dob=user_data.dob,
         password_hash=hash_password(
             user_data.password
         )
@@ -63,8 +62,6 @@ def signup(
     if user_data.is_student:
         new_student = Student(
             user_id=new_user.id,
-            name=user_data.name,
-            dob=user_data.dob,
             school=user_data.school,
             student_class=user_data.student_class
         )
@@ -172,9 +169,9 @@ def get_current_user(
         "district": user.district,
         "village_locality": user.village_locality,
         "created_at": user.created_at,
+        "dob": user.dob,
         "student": {
             "student_id": student.id,
-            "dob": student.dob,
             "school": student.school,
             "student_class": student.student_class
         } if student else None
