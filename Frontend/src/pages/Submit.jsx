@@ -108,15 +108,7 @@ function Submit() {
                 }
             }
 
-            setMessage('Submission created successfully!')
-
-            setStudentClass('')
-            setHeading('')
-            setDescription('')
-            setWrittenContent('')
-            setFile(null)
-            setMediaUrl('')
-            setMediaType('video')
+            navigate(`/category/${encodeURIComponent(contentType)}`)
 
         } catch (error) {
             console.error(error)
@@ -282,7 +274,7 @@ function Submit() {
                                             : 'content-type'
                                     }
                                     onClick={() => {
-                                        setContentType('Singing')
+                                        setContentType('Song')
                                         setWrittenContent('')
                                     }}
                                 >
@@ -302,7 +294,7 @@ function Submit() {
                                             : 'content-type'
                                     }
                                     onClick={() => {
-                                        setContentType('Instruments')
+                                        setContentType('Instrumental')
                                         setWrittenContent('')
                                     }}
                                 >

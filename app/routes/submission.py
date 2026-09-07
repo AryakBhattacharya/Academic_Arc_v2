@@ -255,6 +255,7 @@ def get_public_submissions(
             "student_name": student.user.name,
             "student_class": submission.student_class,
             "school": student.school,
+            "profile_picture": student.user.profile_picture,
             "heading": submission.heading,
             "description": submission.description,
             "written_content": submission.written_content,

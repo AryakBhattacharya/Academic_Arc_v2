@@ -4,7 +4,6 @@ import Signup from './pages/Signup'
 import Dashboard from './pages/Dashboard'
 import Profile from './pages/Profile'
 import Submit from './pages/Submit'
-import Post from './pages/Post'
 import Category from './pages/Category'
 
 function App() {
@@ -16,7 +15,6 @@ function App() {
       <Route path="/signup" element={<Signup />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/submit" element={<Submit />} />
-      <Route path="/post/:id" element={<Post />} />
       <Route path="/category/:type" element={<Category />} />
     </Routes>
   )
