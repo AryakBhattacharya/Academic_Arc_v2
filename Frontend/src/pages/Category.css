@@ -212,12 +212,11 @@
 
 .written-content-box {
   height: 300px;
-  margin-top: 20px;
+  margin-top: 5px;
 
-  padding: 22px 25px;
+  padding: 12px 25px;
 
   background: #faf9f6;
-  border: 1px solid #ded9d1;
   border-radius: 10px;
 
   overflow-y: auto;
