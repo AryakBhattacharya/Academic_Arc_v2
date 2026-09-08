@@ -33,17 +33,22 @@ def verify_password(
         hashed_password
     )
 
-def create_access_token(user_id: int):
+def create_access_token(user_id: int, role: str):
     expire = datetime.utcnow() + timedelta(
         minutes=ACCESS_TOKEN_EXPIRE_MINUTES
     )
 
     payload = {
         "user_id": user_id,
+        "role": role,
         "exp": expire
     }
 
-    return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
+    return jwt.encode(
+        payload,
+        SECRET_KEY,
+        algorithm=ALGORITHM
+    )
 
 def decode_access_token(token: str):
     try:
@@ -82,6 +87,38 @@ def get_current_user(
         raise HTTPException(
             status_code=401,
             detail="User not found"
+        )
+
+    return user
+
+def get_current_admin(
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+    db: Session = Depends(get_db)
+):
+    token = credentials.credentials
+
+    payload = decode_access_token(token)
+
+    if not payload or "user_id" not in payload:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid or expired token"
+        )
+
+    user = db.query(User).filter(
+        User.id == payload["user_id"]
+    ).first()
+
+    if not user:
+        raise HTTPException(
+            status_code=401,
+            detail="User not found"
+        )
+
+    if user.role != "admin":
+        raise HTTPException(
+            status_code=403,
+            detail="Admin access required"
         )
 
     return user

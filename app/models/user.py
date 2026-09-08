@@ -39,6 +39,12 @@ class User(Base):
         default=False
     )
 
+    role: Mapped[str] = mapped_column(
+        String(20),
+        nullable=False,
+        default="user"
+    )
+
     password_hash: Mapped[str] = mapped_column(
         String(255),
         nullable=False

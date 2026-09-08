@@ -111,7 +111,10 @@ def login(
         .first()
     )
 
-    access_token = create_access_token(user.id)
+    access_token = create_access_token(
+        user.id,
+        user.role
+    )
 
     return {
     "message": "Login successful",
