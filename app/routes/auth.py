@@ -120,6 +120,7 @@ def login(
     "message": "Login successful",
     "user_id": user.id,
     "student_id": student.id if student else None,
+    "role": user.role,
     "access_token": access_token
 }
 

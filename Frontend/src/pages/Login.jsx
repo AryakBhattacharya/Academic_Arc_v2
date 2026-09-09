@@ -34,7 +34,11 @@ function Login() {
 
             localStorage.setItem('access_token', data.access_token)
 
-            navigate('/dashboard')
+            if (data.role === 'admin') {
+                navigate('/admin')
+            } else {
+                navigate('/dashboard')
+            }
         } catch (error) {
             console.error(error)
             alert('Could not connect to the backend')

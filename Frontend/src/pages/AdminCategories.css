@@ -1,0 +1,130 @@
+.admin-categories-panel {
+    background: #ffffff;
+    border: 1px solid #e5e5e2;
+    border-radius: 10px;
+    overflow: hidden;
+    max-width: 900px;
+}
+
+.admin-category-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-category-row {
+    min-height: 76px;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #eeeeeb;
+}
+
+.admin-category-row:last-child {
+    border-bottom: none;
+}
+
+.admin-category-row:hover {
+    background: #fafaf8;
+}
+
+.admin-category-info {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+}
+
+.admin-category-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 7px;
+    background: #f1f1ee;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #777777;
+    font-size: 13px;
+}
+
+.admin-category-info > div:last-child {
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-category-info strong {
+    font-size: 12px;
+    font-weight: 600;
+    color: #292929;
+}
+
+.admin-category-info span {
+    margin-top: 4px;
+    font-size: 10px;
+    color: #999999;
+}
+
+.admin-category-view {
+    height: 30px;
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    border: 1px solid #ddddda;
+    border-radius: 5px;
+    background: #ffffff;
+    color: #555555;
+    font-family: inherit;
+    font-size: 10px;
+    cursor: pointer;
+}
+
+.admin-category-view:hover {
+    background: #f3f3f0;
+    color: #222222;
+}
+
+.admin-category-view span {
+    font-size: 13px;
+}
+
+.admin-categories-loading,
+.admin-categories-empty {
+    min-height: 350px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.admin-categories-loading {
+    color: #888888;
+    font-size: 12px;
+}
+
+.admin-categories-empty h3 {
+    margin: 0;
+    font-size: 13px;
+}
+
+.admin-categories-empty p {
+    margin: 6px 0 0;
+    font-size: 11px;
+    color: #999999;
+}
+
+@media (max-width: 600px) {
+
+    .admin-category-row {
+        padding: 14px;
+    }
+
+    .admin-category-view {
+        font-size: 0;
+    }
+
+    .admin-category-view span {
+        font-size: 14px;
+    }
+
+}
