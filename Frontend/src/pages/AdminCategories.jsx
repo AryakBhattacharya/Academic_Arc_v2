@@ -84,7 +84,10 @@ function AdminCategories() {
                         Categories
                     </button>
 
-                    <button className="admin-nav-item">
+                    <button
+                        className="admin-nav-item"
+                        onClick={() => navigate('/admin/featured')}
+                    >
                         <span>★</span>
                         Featured
                     </button>

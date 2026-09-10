@@ -5,6 +5,7 @@ from app.database import Base, engine
 from app.models.user import User
 from app.models.student import Student
 from app.models.submission import Submission
+from app.models.featured import SpecialFeature
 from app.routes.auth import router as auth_router
 from app.routes.admin import router as admin_router
 from app.routes.student import router as student_router
