@@ -7,6 +7,10 @@ function AdminFeatured() {
 
     const [admin, setAdmin] = useState(null)
     const [featuredPosts, setFeaturedPosts] = useState([])
+    const [allPosts, setAllPosts] = useState([])
+    const [showAddPosts, setShowAddPosts] = useState(false)
+    const [search, setSearch] = useState('')
+    const [addingPost, setAddingPost] = useState(null)
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
@@ -53,6 +57,22 @@ function AdminFeatured() {
                 const featuredData = await featuredResponse.json()
                 setFeaturedPosts(featuredData)
 
+                const postsResponse = await fetch(
+                    'http://127.0.0.1:8000/admin/posts',
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                )
+
+                if (!postsResponse.ok) {
+                    throw new Error('Failed to load posts')
+                }
+
+                const postsData = await postsResponse.json()
+                setAllPosts(postsData)
+
             } catch (error) {
                 console.error(error)
             } finally {
@@ -62,6 +82,68 @@ function AdminFeatured() {
 
         loadFeatured()
     }, [navigate])
+
+    const addFeature = async (submissionId) => {
+        const token = localStorage.getItem('access_token')
+
+        setAddingPost(submissionId)
+
+        try {
+            const response = await fetch(
+                `http://127.0.0.1:8000/admin/featured/${submissionId}`,
+                {
+                    method: 'POST',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            )
+
+            const data = await response.json()
+
+            if (!response.ok) {
+                alert(data.detail || 'Failed to add special mention')
+                return
+            }
+
+            // Reload featured posts
+            const featuredResponse = await fetch(
+                'http://127.0.0.1:8000/admin/featured',
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            )
+
+            if (featuredResponse.ok) {
+                const featuredData = await featuredResponse.json()
+                setFeaturedPosts(featuredData)
+            }
+
+        } catch (error) {
+            console.error(error)
+            alert('Could not connect to the backend')
+        } finally {
+            setAddingPost(null)
+        }
+    }
+
+    const featuredIds = new Set(
+        featuredPosts.map((post) => post.submission_id)
+    )
+
+    const availablePosts = allPosts
+        .filter((post) => !featuredIds.has(post.id))
+        .filter((post) => {
+            const query = search.toLowerCase()
+
+            return (
+                post.heading?.toLowerCase().includes(query) ||
+                post.user_name?.toLowerCase().includes(query) ||
+                post.content_type?.toLowerCase().includes(query)
+            )
+        })
 
     const handleLogout = () => {
         localStorage.removeItem('access_token')
@@ -261,11 +343,96 @@ function AdminFeatured() {
                             </p>
                         </div>
 
-                        <span className="admin-featured-count">
-                            {featuredPosts.length} posts
-                        </span>
+                        <div className="admin-featured-heading-actions">
+
+                            <span className="admin-featured-count">
+                                {featuredPosts.length} posts
+                            </span>
+
+                            <button
+                                className="admin-featured-add"
+                                onClick={() => setShowAddPosts(!showAddPosts)}
+                            >
+                                {showAddPosts ? 'Close' : '+ Add Post'}
+                            </button>
+
+                        </div>
 
                     </div>
+
+                    {showAddPosts && (
+                        <div className="admin-add-featured">
+
+                            <div className="admin-add-featured-header">
+
+                                <div>
+                                    <h3>Add Special Mention</h3>
+                                    <p>
+                                        Select a published post to feature.
+                                    </p>
+                                </div>
+
+                                <input
+                                    type="text"
+                                    placeholder="Search posts..."
+                                    value={search}
+                                    onChange={(e) => setSearch(e.target.value)}
+                                    className="admin-featured-search"
+                                />
+
+                            </div>
+
+                            <div className="admin-add-featured-list">
+
+                                {availablePosts.length === 0 ? (
+
+                                    <p className="admin-no-posts">
+                                        No matching posts found.
+                                    </p>
+
+                                ) : (
+
+                                    availablePosts.map((post) => (
+
+                                        <div
+                                            className="admin-add-featured-row"
+                                            key={post.id}
+                                        >
+
+                                            <div>
+
+                                                <strong>
+                                                    {post.heading}
+                                                </strong>
+
+                                                <span>
+                                                    {post.user_name}
+                                                    {' • '}
+                                                    {post.content_type}
+                                                </span>
+
+                                            </div>
+
+                                            <button
+                                                className="admin-featured-add-button"
+                                                onClick={() => addFeature(post.id)}
+                                                disabled={addingPost === post.id}
+                                            >
+                                                {addingPost === post.id
+                                                    ? 'Adding...'
+                                                    : 'Feature'}
+                                            </button>
+
+                                        </div>
+
+                                    ))
+
+                                )}
+
+                            </div>
+
+                        </div>
+                    )}
 
 
                     {featuredPosts.length === 0 ? (

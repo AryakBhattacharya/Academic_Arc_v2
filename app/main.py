@@ -10,6 +10,7 @@ from app.models.featured import SpecialFeature
 from app.routes.auth import router as auth_router
 from app.routes.admin import router as admin_router
 from app.routes.student import router as student_router
+from app.routes.featured import router as featured_router
 from app.routes.submission import router as submission_router
 
 
@@ -31,6 +32,7 @@ app.add_middleware(
 app.include_router(auth_router)
 app.include_router(admin_router)
 app.include_router(student_router)
+app.include_router(featured_router)
 app.include_router(submission_router)
 
 

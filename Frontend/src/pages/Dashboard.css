@@ -210,6 +210,245 @@
   z-index: 1;
 }
 
+/* FEATURED SECTION */
+
+.featured-section {
+  margin: 120px calc(-1 * clamp(24px, 8vw, 250px)) 0;
+  padding: 75px clamp(24px, 8vw, 250px) 100px;
+
+  background: #f5f2ed;
+  color: #171717;
+
+  text-align: left;
+}
+
+.featured-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 30px;
+}
+
+.featured-section-header .section-label {
+  margin-bottom: 18px;
+}
+
+.featured-section-header h2 {
+  margin: 0 0 10px;
+  color: #171717;
+  font-size: 38px;
+  line-height: 1.15;
+}
+
+.featured-section-header p {
+  margin: 0;
+  color: #77736d;
+  font-size: 15px;
+}
+
+
+/* CAROUSEL CONTROLS */
+
+.featured-carousel-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.featured-carousel-controls button {
+  width: 38px;
+  height: 38px;
+  border: 1px solid #d8d3cc;
+  border-radius: 50%;
+  background: transparent;
+  color: #171717;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.featured-carousel-controls button:hover {
+  background: #171717;
+  color: #ffffff;
+}
+
+
+/* CAROUSEL */
+
+.featured-carousel {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  padding: 5px 2px 15px;
+}
+
+.featured-carousel::-webkit-scrollbar {
+  display: none;
+}
+
+
+/* FEATURED CARD */
+
+.featured-card {
+  position: relative;
+  flex: 0 0 360px;
+  height: 390px;
+  overflow: hidden;
+
+  display: flex;
+  flex-direction: column;
+
+  border: 1px solid #ddd8d0;
+  border-radius: 15px;
+  background: #ffffff;
+
+  transition: transform 0.25s ease, border-color 0.25s ease;
+}
+
+.featured-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(216, 138, 53, 0.4);
+}
+
+
+/* BADGE */
+
+.featured-card-badge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  z-index: 3;
+  padding: 6px 10px;
+  border-radius: 20px;
+  background: #d88a35;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+
+/* MEDIA */
+
+.featured-card-media {
+  width: 100%;
+  height: 190px;
+  flex-shrink: 0;
+  overflow: hidden;
+  background: #111;
+}
+
+.featured-card-media img,
+.featured-card-media video,
+.featured-card-media iframe {
+  width: 100%;
+  height: 100%;
+  display: block;
+  border: none;
+}
+
+.featured-card-media img {
+  object-fit: cover;
+}
+
+.featured-card-media video {
+  object-fit: contain;
+  background: #111;
+}
+
+
+/* CONTENT */
+
+.featured-card-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+}
+
+.featured-card-category {
+  display: inline-block;
+  margin-bottom: 10px;
+  color: #c87518;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
+.featured-card-content h3 {
+  margin: 0 0 10px;
+  color: #171717;
+  font-size: 22px;
+  line-height: 1.2;
+}
+
+.featured-card-content > p {
+  margin: 0 0 20px;
+  color: #66625d;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+
+/* WRITTEN CONTENT */
+
+.featured-card-written {
+  max-height: 110px;
+  overflow: hidden;
+  margin-bottom: 20px;
+  color: #44413d;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+
+/* AUTHOR */
+
+.featured-card-author {
+  margin-top: auto;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding-top: 15px;
+  border-top: 1px solid #e5e0d9;
+}
+
+.featured-card-avatar {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #333332;
+  color: #d8d4ce;
+  font-size: 13px;
+}
+
+.featured-card-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.featured-card-author strong {
+  display: block;
+  margin-bottom: 3px;
+  color: #171717;
+  font-size: 12px;
+}
+
+.featured-card-author span {
+  display: block;
+  color: #77736d;
+  font-size: 10px;
+}
+
 /* Resize */
 
 @media (max-width: 1100px) {
@@ -278,5 +517,34 @@
 
   .category-card {
     height: 220px;
+  }
+
+  .featured-section {
+    margin-top: 80px;
+  }
+
+  .featured-section-header {
+    align-items: flex-start;
+  }
+
+  .featured-section-header h2 {
+    font-size: 30px;
+  }
+
+  .featured-section-header p {
+    max-width: 250px;
+    line-height: 1.5;
+  }
+
+  .featured-carousel-controls {
+    flex-shrink: 0;
+  }
+
+  .featured-card {
+    flex-basis: 300px;
+  }
+
+  .featured-card-media {
+    height: 190px;
   }
 }

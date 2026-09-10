@@ -1,5 +1,42 @@
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import './Dashboard.css'
+
+const isYouTubeUrl = (url) => {
+  return url?.includes('youtube.com') || url?.includes('youtu.be')
+}
+
+const getYouTubeEmbedUrl = (url) => {
+  if (url.includes('youtu.be/')) {
+    const id = url.split('youtu.be/')[1].split('?')[0]
+    return `https://www.youtube.com/embed/${id}`
+  }
+
+  if (url.includes('youtube.com/watch?v=')) {
+    const id = new URL(url).searchParams.get('v')
+    return `https://www.youtube.com/embed/${id}`
+  }
+
+  return url
+}
+
+const isGoogleDriveUrl = (url) => {
+  return url?.includes('drive.google.com')
+}
+
+const getGoogleDrivePreviewUrl = (url) => {
+  const match = url.match(/\/d\/([^/]+)/)
+
+  if (match) {
+    return `https://drive.google.com/file/d/${match[1]}/preview`
+  }
+
+  return url
+}
+
+const isFacebookUrl = (url) => {
+  return url?.includes('facebook.com') || url?.includes('fb.watch')
+}
 
 function Dashboard() {
   const token = localStorage.getItem('access_token')
@@ -10,6 +47,27 @@ function Dashboard() {
   }
 
   const isLoggedIn = !!token
+
+  const [featuredPosts, setFeaturedPosts] = useState([])
+  const featuredCarouselRef = useRef(null)
+
+  useEffect(() => {
+    fetch('http://127.0.0.1:8000/featured/')
+      .then((response) => response.json())
+      .then((data) => setFeaturedPosts(data))
+      .catch((error) => {
+        console.error('Error fetching featured posts:', error)
+      })
+  }, [])
+
+  const scrollFeatured = (direction) => {
+    if (!featuredCarouselRef.current) return
+
+    featuredCarouselRef.current.scrollBy({
+      left: direction * 360,
+      behavior: 'smooth',
+    })
+  }
 
   const categories = [
     {
@@ -119,6 +177,156 @@ function Dashboard() {
           ))}
         </div>
       </main>
+
+      {featuredPosts.length > 0 && (
+        <section className="featured-section">
+
+          <div className="featured-section-header">
+
+            <div>
+              <div className="section-label">
+                • FEATURED
+              </div>
+
+              <h2>Special Mentions</h2>
+
+              <p>
+                Discover student work specially selected by Academic Arc.
+              </p>
+            </div>
+
+            <div className="featured-carousel-controls">
+              <button
+                onClick={() => scrollFeatured(-1)}
+                aria-label="Previous featured posts"
+              >
+                ←
+              </button>
+
+              <button
+                onClick={() => scrollFeatured(1)}
+                aria-label="Next featured posts"
+              >
+                →
+              </button>
+            </div>
+
+          </div>
+
+          <div
+            className="featured-carousel"
+            ref={featuredCarouselRef}
+          >
+
+            {featuredPosts.map((post) => (
+              <article
+                key={post.id}
+                className="featured-card"
+              >
+
+                <div className="featured-card-badge">
+                  ★ Special Mention
+                </div>
+
+                {post.media_url && (
+                  <div className="featured-card-media">
+
+                    {post.media_type?.startsWith('video/') &&
+                    !isYouTubeUrl(post.media_url) &&
+                    !isGoogleDriveUrl(post.media_url) &&
+                    !isFacebookUrl(post.media_url) ? (
+                      <video
+                        src={post.media_url}
+                        controls
+                        preload="metadata"
+                      />
+                    ) : isYouTubeUrl(post.media_url) ? (
+                      <iframe
+                        src={getYouTubeEmbedUrl(post.media_url)}
+                        title={post.heading}
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
+                    ) : isGoogleDriveUrl(post.media_url) ? (
+                      <iframe
+                        src={getGoogleDrivePreviewUrl(post.media_url)}
+                        title={post.heading}
+                        allow="autoplay"
+                        allowFullScreen
+                      />
+                    ) : isFacebookUrl(post.media_url) ? (
+                      <iframe
+                        src={`https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(post.media_url)}&show_text=false`}
+                        title={post.heading}
+                        allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                        allowFullScreen
+                      />
+                    ) : (
+                      <img
+                        src={post.media_url}
+                        alt={post.heading}
+                      />
+                    )}
+
+                  </div>
+                )}
+
+                <div className="featured-card-content">
+
+                  <span className="featured-card-category">
+                    {post.content_type}
+                  </span>
+
+                  <h3>
+                    {post.heading}
+                  </h3>
+
+                  {post.description && (
+                    <p>
+                      {post.description}
+                    </p>
+                  )}
+
+                  {post.written_content && (
+                    <div className="featured-card-written">
+                      {post.written_content}
+                    </div>
+                  )}
+
+                  <div className="featured-card-author">
+
+                    <div className="featured-card-avatar">
+                      {post.profile_picture ? (
+                        <img
+                          src={post.profile_picture}
+                          alt={post.student_name}
+                        />
+                      ) : (
+                        post.student_name
+                          ?.charAt(0)
+                          .toUpperCase()
+                      )}
+                    </div>
+
+                    <div>
+                      <strong>{post.student_name}</strong>
+
+                      <span>
+                        Class {post.student_class} • {post.school}
+                      </span>
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </article>
+            ))}
+
+          </div>
+
+        </section>
+      )}
     </div>
   )
 }
