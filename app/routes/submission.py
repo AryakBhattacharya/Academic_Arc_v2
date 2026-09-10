@@ -13,6 +13,7 @@ from app.models.submission import Submission
 from app.schemas.submission import SubmissionCreate
 
 from app.models.user import User
+from app.models.like import PostLike
 from app.models.student import Student
 
 from app.services.auth import get_current_user, decode_access_token
@@ -320,3 +321,150 @@ def get_submission_media(
         content=file_bytes,
         media_type=submission.media_type
     )
+
+@router.post("/{submission_id}/like")
+def like_submission(
+    submission_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    submission = (
+        db.query(Submission)
+        .filter(Submission.id == submission_id)
+        .first()
+    )
+
+    if not submission:
+        raise HTTPException(
+            status_code=404,
+            detail="Submission not found"
+        )
+
+    existing_like = (
+        db.query(PostLike)
+        .filter(
+            PostLike.submission_id == submission_id,
+            PostLike.user_id == current_user.id
+        )
+        .first()
+    )
+
+    if existing_like:
+        raise HTTPException(
+            status_code=400,
+            detail="You have already liked this post"
+        )
+
+    new_like = PostLike(
+        submission_id=submission_id,
+        user_id=current_user.id
+    )
+
+    db.add(new_like)
+    db.commit()
+
+    like_count = (
+        db.query(PostLike)
+        .filter(PostLike.submission_id == submission_id)
+        .count()
+    )
+
+    return {
+        "message": "Post liked successfully",
+        "submission_id": submission_id,
+        "like_count": like_count
+    }
+
+
+@router.delete("/{submission_id}/like")
+def unlike_submission(
+    submission_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    like = (
+        db.query(PostLike)
+        .filter(
+            PostLike.submission_id == submission_id,
+            PostLike.user_id == current_user.id
+        )
+        .first()
+    )
+
+    if not like:
+        raise HTTPException(
+            status_code=400,
+            detail="You have not liked this post"
+        )
+
+    db.delete(like)
+    db.commit()
+
+    like_count = (
+        db.query(PostLike)
+        .filter(PostLike.submission_id == submission_id)
+        .count()
+    )
+
+    return {
+        "message": "Post unliked successfully",
+        "submission_id": submission_id,
+        "like_count": like_count
+    }
+
+@router.get("/{submission_id}/likes")
+def get_submission_likes(
+    submission_id: int,
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+    db: Session = Depends(get_db)
+):
+    payload = decode_access_token(credentials.credentials)
+
+    if not payload:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid or expired token"
+        )
+
+    user_id = payload.get("user_id")
+
+    if not user_id:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid token"
+        )
+
+    submission = (
+        db.query(Submission)
+        .filter(Submission.id == submission_id)
+        .first()
+    )
+
+    if not submission:
+        raise HTTPException(
+            status_code=404,
+            detail="Submission not found"
+        )
+
+    like_count = (
+        db.query(PostLike)
+        .filter(
+            PostLike.submission_id == submission_id
+        )
+        .count()
+    )
+
+    user_like = (
+        db.query(PostLike)
+        .filter(
+            PostLike.submission_id == submission_id,
+            PostLike.user_id == user_id
+        )
+        .first()
+    )
+
+    return {
+        "submission_id": submission_id,
+        "like_count": like_count,
+        "liked_by_user": user_like is not None
+    }

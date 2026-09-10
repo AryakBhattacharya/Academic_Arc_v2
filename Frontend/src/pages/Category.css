@@ -245,6 +245,58 @@
   border-radius: 10px;
 }
 
+/* Post actions */
+
+.submission-actions {
+  display: flex;
+  align-items: center;
+  padding: 4px 0px 0px;
+  margin-top: 4px;
+}
+
+.submission-like {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  border: none;
+  background: transparent;
+
+  padding: 4px 6px;
+
+  color: #77736d;
+  font-family: inherit;
+  font-size: 13px;
+
+  cursor: pointer;
+  border-radius: 6px;
+
+  transition: background 0.15s ease,
+              color 0.15s ease;
+}
+
+.submission-like:hover {
+  background: #f4f1ec;
+}
+
+.submission-like .like-icon {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.submission-like.liked {
+  color: #d98222;
+}
+
+.submission-like.liked:hover {
+  background: #f8eee2;
+}
+
+.submission-like:disabled {
+  cursor: default;
+  opacity: 0.7;
+}
+
 
 /* Empty category */
 
@@ -307,6 +359,10 @@
 
   .written-content {
     font-size: 15px;
+  }
+
+  .submission-actions {
+    padding: 0 18px 16px;
   }
 
 }

@@ -7,6 +7,8 @@ function Category() {
   const categoryName = decodeURIComponent(type)
 
   const [submissions, setSubmissions] = useState([])
+  const [likeData, setLikeData] = useState({})
+  const [liking, setLiking] = useState({})
 
   useEffect(() => {
     fetch('http://127.0.0.1:8000/submissions/public')
@@ -28,6 +30,94 @@ function Category() {
         console.error('Error fetching submissions:', error)
       })
   }, [categoryName])
+
+  const fetchLikes = async (submissionId) => {
+    const token = localStorage.getItem('access_token')
+
+    if (!token) return
+
+    try {
+      const response = await fetch(
+        `http://127.0.0.1:8000/submissions/${submissionId}/likes`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+
+      if (!response.ok) return
+
+      const data = await response.json()
+
+      setLikeData((prev) => ({
+        ...prev,
+        [submissionId]: data,
+      }))
+    } catch (error) {
+      console.error('Error fetching likes:', error)
+    }
+  }
+
+  useEffect(() => {
+    submissions.forEach((submission) => {
+      fetchLikes(submission.id)
+    })
+  }, [submissions])
+
+  const handleLike = async (submissionId) => {
+    const token = localStorage.getItem('access_token')
+
+    if (!token) {
+      alert('Please log in to like a post.')
+      return
+    }
+
+    if (liking[submissionId]) return
+
+    setLiking((prev) => ({
+      ...prev,
+      [submissionId]: true,
+    }))
+
+    const current = likeData[submissionId]
+
+    try {
+      const method = current?.liked_by_user ? 'DELETE' : 'POST'
+
+      const response = await fetch(
+        `http://127.0.0.1:8000/submissions/${submissionId}/like`,
+        {
+          method,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.detail || 'Unable to update like')
+      }
+
+      setLikeData((prev) => ({
+        ...prev,
+        [submissionId]: {
+          submission_id: submissionId,
+          like_count: data.like_count,
+          liked_by_user: method === 'POST',
+        },
+      }))
+    } catch (error) {
+      console.error('Error updating like:', error)
+    } finally {
+      setLiking((prev) => ({
+        ...prev,
+        [submissionId]: false,
+      }))
+    }
+  }
 
   const isVideoType = (submission) => {
     const type = submission.content_type?.toLowerCase()
@@ -329,6 +419,28 @@ function Category() {
                       </div>
 
                     )}
+
+                    <div className="submission-actions">
+
+                      <button
+                        className={`submission-like ${
+                          likeData[submission.id]?.liked_by_user
+                            ? 'liked'
+                            : ''
+                        }`}
+                        onClick={() => handleLike(submission.id)}
+                        disabled={liking[submission.id]}
+                      >
+                        <span className="like-icon">
+                          {likeData[submission.id]?.liked_by_user ? '♥' : '♡'}
+                        </span>
+
+                        <span>
+                          {likeData[submission.id]?.like_count ?? 0}
+                        </span>
+                      </button>
+
+                    </div>
 
                   </div>
 
