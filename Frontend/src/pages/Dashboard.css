@@ -246,6 +246,10 @@
   font-size: 15px;
 }
 
+.featured-group + .featured-group {
+  margin-top: 90px;
+}
+
 
 /* CAROUSEL CONTROLS */
 

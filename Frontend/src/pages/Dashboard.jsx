@@ -38,6 +38,96 @@ const isFacebookUrl = (url) => {
   return url?.includes('facebook.com') || url?.includes('fb.watch')
 }
 
+function FeaturedCard({ post }) {
+  return (
+    <article key={post.id} className="featured-card">
+
+      {post.also_top_post && (
+        <div className="featured-card-badge">
+          🏆 Top Post — {post.featured_month}
+        </div>
+      )}
+
+      {post.media_url && (
+        <div className="featured-card-media">
+          {post.media_type?.startsWith('video/') &&
+          !isYouTubeUrl(post.media_url) &&
+          !isGoogleDriveUrl(post.media_url) &&
+          !isFacebookUrl(post.media_url) ? (
+            <video
+              src={post.media_url}
+              controls
+              preload="metadata"
+            />
+          ) : isYouTubeUrl(post.media_url) ? (
+            <iframe
+              src={getYouTubeEmbedUrl(post.media_url)}
+              title={post.heading}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          ) : isGoogleDriveUrl(post.media_url) ? (
+            <iframe
+              src={getGoogleDrivePreviewUrl(post.media_url)}
+              title={post.heading}
+              allow="autoplay"
+              allowFullScreen
+            />
+          ) : isFacebookUrl(post.media_url) ? (
+            <iframe
+              src={`https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(post.media_url)}&show_text=false`}
+              title={post.heading}
+              allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+              allowFullScreen
+            />
+          ) : (
+            <img src={post.media_url} alt={post.heading} />
+          )}
+        </div>
+      )}
+
+      <div className="featured-card-content">
+        <span className="featured-card-category">
+          {post.content_type}
+        </span>
+
+        <h3>{post.heading}</h3>
+
+        {post.description && (
+          <p>{post.description}</p>
+        )}
+
+        {post.written_content && (
+          <div className="featured-card-written">
+            {post.written_content}
+          </div>
+        )}
+
+        <div className="featured-card-author">
+          <div className="featured-card-avatar">
+            {post.profile_picture ? (
+              <img
+                src={post.profile_picture}
+                alt={post.student_name}
+              />
+            ) : (
+              post.student_name?.charAt(0).toUpperCase()
+            )}
+          </div>
+
+          <div>
+            <strong>{post.student_name}</strong>
+            <span>
+              Class {post.student_class} • {post.school}
+            </span>
+          </div>
+        </div>
+      </div>
+
+    </article>
+  )
+}
+
 function Dashboard() {
   const token = localStorage.getItem('access_token')
 
@@ -49,7 +139,8 @@ function Dashboard() {
   const isLoggedIn = !!token
 
   const [featuredPosts, setFeaturedPosts] = useState([])
-  const featuredCarouselRef = useRef(null)
+  const specialCarouselRef = useRef(null)
+  const automaticCarouselRef = useRef(null)
 
   useEffect(() => {
     fetch('http://127.0.0.1:8000/featured/')
@@ -60,10 +151,10 @@ function Dashboard() {
       })
   }, [])
 
-  const scrollFeatured = (direction) => {
-    if (!featuredCarouselRef.current) return
+  const scrollCarousel = (ref, direction) => {
+    if (!ref.current) return
 
-    featuredCarouselRef.current.scrollBy({
+    ref.current.scrollBy({
       left: direction * 360,
       behavior: 'smooth',
     })
@@ -107,6 +198,14 @@ function Dashboard() {
       number: '06',
     },
   ]
+
+  const specialPosts = featuredPosts.filter(
+    (post) => post.feature_type === 'special'
+  )
+
+  const automaticPosts = featuredPosts.filter(
+    (post) => post.feature_type === 'automatic'
+  )
 
   return (
     <div className="magazine">
@@ -181,149 +280,105 @@ function Dashboard() {
       {featuredPosts.length > 0 && (
         <section className="featured-section">
 
-          <div className="featured-section-header">
+          {/* SPECIAL MENTIONS */}
+          {specialPosts.length > 0 && (
+            <div className="featured-group">
 
-            <div>
-              <div className="section-label">
-                • FEATURED
+              <div className="featured-section-header">
+                <div>
+                  <div className="section-label">
+                    • FEATURED
+                  </div>
+
+                  <h2>Special Mentions</h2>
+
+                  <p>
+                    Discover student work specially selected by Academic Arc.
+                  </p>
+                </div>
+
+                <div className="featured-carousel-controls">
+                  <button
+                    onClick={() => scrollCarousel(specialCarouselRef, -1)}
+                    aria-label="Previous special mentions"
+                  >
+                    ←
+                  </button>
+
+                  <button
+                    onClick={() => scrollCarousel(specialCarouselRef, 1)}
+                    aria-label="Next special mentions"
+                  >
+                    →
+                  </button>
+                </div>
               </div>
 
-              <h2>Special Mentions</h2>
+              <div
+                className="featured-carousel"
+                ref={specialCarouselRef}
+              >
+                {specialPosts.map((post) => (
+                  <FeaturedCard
+                    key={post.id}
+                    post={post}
+                  />
+                ))}
+              </div>
 
-              <p>
-                Discover student work specially selected by Academic Arc.
-              </p>
             </div>
+          )}
 
-            <div className="featured-carousel-controls">
-              <button
-                onClick={() => scrollFeatured(-1)}
-                aria-label="Previous featured posts"
-              >
-                ←
-              </button>
+          {/* AUTOMATIC TOP POSTS */}
+          {automaticPosts.length > 0 && (
+            <div className="featured-group automatic-featured-group">
 
-              <button
-                onClick={() => scrollFeatured(1)}
-                aria-label="Next featured posts"
-              >
-                →
-              </button>
-            </div>
-
-          </div>
-
-          <div
-            className="featured-carousel"
-            ref={featuredCarouselRef}
-          >
-
-            {featuredPosts.map((post) => (
-              <article
-                key={post.id}
-                className="featured-card"
-              >
-
-                <div className="featured-card-badge">
-                  ★ Special Mention
-                </div>
-
-                {post.media_url && (
-                  <div className="featured-card-media">
-
-                    {post.media_type?.startsWith('video/') &&
-                    !isYouTubeUrl(post.media_url) &&
-                    !isGoogleDriveUrl(post.media_url) &&
-                    !isFacebookUrl(post.media_url) ? (
-                      <video
-                        src={post.media_url}
-                        controls
-                        preload="metadata"
-                      />
-                    ) : isYouTubeUrl(post.media_url) ? (
-                      <iframe
-                        src={getYouTubeEmbedUrl(post.media_url)}
-                        title={post.heading}
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                      />
-                    ) : isGoogleDriveUrl(post.media_url) ? (
-                      <iframe
-                        src={getGoogleDrivePreviewUrl(post.media_url)}
-                        title={post.heading}
-                        allow="autoplay"
-                        allowFullScreen
-                      />
-                    ) : isFacebookUrl(post.media_url) ? (
-                      <iframe
-                        src={`https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(post.media_url)}&show_text=false`}
-                        title={post.heading}
-                        allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
-                        allowFullScreen
-                      />
-                    ) : (
-                      <img
-                        src={post.media_url}
-                        alt={post.heading}
-                      />
-                    )}
-
-                  </div>
-                )}
-
-                <div className="featured-card-content">
-
-                  <span className="featured-card-category">
-                    {post.content_type}
-                  </span>
-
-                  <h3>
-                    {post.heading}
-                  </h3>
-
-                  {post.description && (
-                    <p>
-                      {post.description}
-                    </p>
-                  )}
-
-                  {post.written_content && (
-                    <div className="featured-card-written">
-                      {post.written_content}
-                    </div>
-                  )}
-
-                  <div className="featured-card-author">
-
-                    <div className="featured-card-avatar">
-                      {post.profile_picture ? (
-                        <img
-                          src={post.profile_picture}
-                          alt={post.student_name}
-                        />
-                      ) : (
-                        post.student_name
-                          ?.charAt(0)
-                          .toUpperCase()
-                      )}
-                    </div>
-
-                    <div>
-                      <strong>{post.student_name}</strong>
-
-                      <span>
-                        Class {post.student_class} • {post.school}
-                      </span>
-                    </div>
-
+              <div className="featured-section-header">
+                <div>
+                  <div className="section-label">
+                    • TOP POSTS
                   </div>
 
+                  <h2>
+                    Top Posts — {automaticPosts[0].featured_month}
+                  </h2>
+
+                  <p>
+                    The most-liked submissions from the previous month.
+                  </p>
                 </div>
 
-              </article>
-            ))}
+                <div className="featured-carousel-controls">
+                  <button
+                    onClick={() => scrollCarousel(automaticCarouselRef, -1)}
+                    aria-label="Previous top posts"
+                  >
+                    ←
+                  </button>
 
-          </div>
+                  <button
+                    onClick={() => scrollCarousel(automaticCarouselRef, 1)}
+                    aria-label="Next top posts"
+                  >
+                    →
+                  </button>
+                </div>
+              </div>
+
+              <div
+                className="featured-carousel"
+                ref={automaticCarouselRef}
+              >
+                {automaticPosts.map((post) => (
+                  <FeaturedCard
+                    key={post.id}
+                    post={post}
+                  />
+                ))}
+              </div>
+
+            </div>
+          )}
 
         </section>
       )}
