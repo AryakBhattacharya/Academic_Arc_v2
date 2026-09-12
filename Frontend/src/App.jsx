@@ -10,6 +10,7 @@ import AdminPosts from './pages/AdminPosts'
 import AdminPostView from './pages/AdminPostView'
 import AdminCategories from './pages/AdminCategories'
 import AdminFeatured from './pages/AdminFeatured'
+import AdminUsers from './pages/AdminUsers'
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
       <Route path="/admin/posts/:id" element={<AdminPostView />} />
       <Route path="/admin/categories" element={<AdminCategories />} />
       <Route path="/admin/featured" element={<AdminFeatured />} />
+      <Route path="/admin/users" element={<AdminUsers />} />
     </Routes>
   )
 }

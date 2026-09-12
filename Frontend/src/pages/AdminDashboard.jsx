@@ -109,9 +109,12 @@ function AdminDashboard() {
                         USERS
                     </div>
 
-                    <button className="admin-nav-item">
+                    <button
+                        className="admin-nav-item"
+                        onClick={() => navigate('/admin/users')}
+                    >
                         <span>♙</span>
-                        Students
+                        Users
                     </button>
 
                     <button className="admin-nav-item">

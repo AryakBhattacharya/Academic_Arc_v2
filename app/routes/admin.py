@@ -294,3 +294,44 @@ def remove_special_feature(
         "message": "Post removed from special mentions",
         "submission_id": submission_id
     }
+
+@router.get("/users")
+def get_admin_users(
+    admin: User = Depends(get_current_admin),
+    db: Session = Depends(get_db)
+):
+    users = (
+        db.query(
+            User,
+            Student,
+            func.count(Submission.id).label("submission_count")
+        )
+        .outerjoin(Student, Student.user_id == User.id)
+        .outerjoin(Submission, Submission.user_id == User.id)
+        .group_by(User.id, Student.id)
+        .order_by(User.created_at.desc())
+        .all()
+    )
+
+    results = []
+
+    for user, student, submission_count in users:
+        results.append({
+            "id": user.id,
+            "name": user.name,
+            "email": user.email,
+            "phone": user.phone,
+            "is_student": user.is_student,
+            "profile_picture": user.profile_picture,
+            "district": user.district,
+            "village_locality": user.village_locality,
+            "dob": user.dob,
+            "created_at": user.created_at,
+
+            "school": student.school if student else None,
+            "student_class": student.student_class if student else None,
+
+            "submission_count": submission_count
+        })
+
+    return results

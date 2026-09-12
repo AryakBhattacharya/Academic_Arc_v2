@@ -1,0 +1,240 @@
+/* =========================================
+   USERS PAGE
+========================================= */
+
+.admin-users-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.admin-users-search {
+    width: 280px;
+    padding: 10px 13px;
+    border: 1px solid #d6d6d6;
+    border-radius: 4px;
+    background: #ffffff;
+    color: #222222;
+    font-size: 13px;
+    outline: none;
+}
+
+.admin-users-search:focus {
+    border-color: #999999;
+}
+
+.admin-users-filters {
+    display: flex;
+    gap: 6px;
+}
+
+.admin-users-filters button {
+    padding: 9px 14px;
+    border: 1px solid #d6d6d6;
+    border-radius: 4px;
+    background: #ffffff;
+    color: #444444;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.admin-users-filters button:hover {
+    background: #f4f4f4;
+}
+
+.admin-users-filters button.active {
+    background: #222222;
+    border-color: #222222;
+    color: #ffffff;
+}
+
+
+/* =========================================
+   TABLE
+========================================= */
+
+.admin-users-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.admin-users-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.admin-users-table th {
+    padding: 13px 20px;
+    background: #f7f7f7;
+    border-bottom: 1px solid #dedede;
+    color: #666666;
+    font-size: 11px;
+    font-weight: 600;
+    text-align: left;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.admin-users-table td {
+    padding: 15px 20px;
+    border-bottom: 1px solid #eeeeee;
+    color: #333333;
+    vertical-align: middle;
+}
+
+.admin-users-table tbody tr:hover {
+    background: #fafafa;
+}
+
+
+/* =========================================
+   USER CELL
+========================================= */
+
+.admin-user-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 220px;
+}
+
+.admin-user-table-avatar {
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: 50%;
+    background: #2b2b2b;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.admin-user-table-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.admin-user-cell strong {
+    display: block;
+    margin-bottom: 3px;
+    color: #222222;
+    font-size: 13px;
+}
+
+.admin-user-cell span {
+    display: block;
+    color: #777777;
+    font-size: 11px;
+}
+
+
+/* =========================================
+   USER TYPE
+========================================= */
+
+.admin-user-type {
+    display: inline-block;
+    padding: 5px 9px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.admin-user-type.student {
+    background: #eeeeee;
+    color: #333333;
+}
+
+.admin-user-type.non-student {
+    background: #f7f7f7;
+    border: 1px solid #dddddd;
+    color: #666666;
+}
+
+
+/* =========================================
+   SCHOOL / CLASS
+========================================= */
+
+.admin-school-cell strong {
+    display: block;
+    margin-bottom: 3px;
+    color: #333333;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.admin-school-cell span {
+    display: block;
+    color: #888888;
+    font-size: 11px;
+}
+
+.admin-muted {
+    color: #aaaaaa;
+}
+
+
+/* =========================================
+   EMPTY STATE
+========================================= */
+
+.admin-empty-state {
+    padding: 60px 30px;
+    text-align: center;
+}
+
+.admin-empty-icon {
+    margin-bottom: 15px;
+    color: #999999;
+    font-size: 28px;
+}
+
+.admin-empty-state h3 {
+    margin: 0 0 7px;
+    color: #333333;
+    font-size: 15px;
+}
+
+.admin-empty-state p {
+    margin: 0;
+    color: #888888;
+    font-size: 12px;
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 800px) {
+
+    .admin-users-toolbar {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .admin-users-search {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .admin-users-filters {
+        flex-wrap: wrap;
+    }
+
+    .admin-users-table {
+        min-width: 700px;
+    }
+}
