@@ -211,7 +211,6 @@ function Dashboard() {
         </Link>
 
         <div className="dashboard-nav-links">
-          <Link to="/">Home</Link>
 
           <button className="language-button">
             বাংলা
@@ -220,7 +219,9 @@ function Dashboard() {
           {isLoggedIn ? (
             <>
               <Link to="/submit">Submit</Link>
-              <Link to="/profile">Profile</Link>
+              <Link to="/profile">
+                <img src="/Icons/profile.svg" alt="Profile" />
+              </Link>
               <button onClick={logout}>Logout</button>
             </>
           ) : (
