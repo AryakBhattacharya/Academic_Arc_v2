@@ -1,0 +1,260 @@
+/* =========================================
+   USER DETAIL PAGE
+========================================= */
+
+.admin-user-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+
+/* =========================================
+   BACK BUTTON
+========================================= */
+
+.admin-back-button {
+    margin-bottom: 18px;
+    padding: 0;
+    border: none;
+    background: none;
+    color: #666666;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.admin-back-button:hover {
+    color: #222222;
+}
+
+
+/* =========================================
+   PROFILE HEADER
+========================================= */
+
+.admin-user-profile-panel {
+    padding: 0;
+}
+
+.admin-user-profile {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 24px;
+}
+
+.admin-user-profile-avatar {
+    width: 68px;
+    height: 68px;
+    flex: 0 0 68px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: 50%;
+    background: #292929;
+    color: #ffffff;
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.admin-user-profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.admin-user-profile h2 {
+    margin: 0 0 9px;
+    color: #222222;
+    font-size: 21px;
+    font-weight: 600;
+}
+
+
+/* =========================================
+   INFORMATION GRID
+========================================= */
+
+.admin-user-info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-top: 1px solid #eeeeee;
+}
+
+.admin-user-info-grid > div {
+    min-height: 72px;
+    padding: 17px 20px;
+    border-right: 1px solid #eeeeee;
+    border-bottom: 1px solid #eeeeee;
+}
+
+.admin-user-info-grid > div:nth-child(3n) {
+    border-right: none;
+}
+
+.admin-user-info-grid span {
+    display: block;
+    margin-bottom: 7px;
+    color: #888888;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.admin-user-info-grid strong {
+    display: block;
+    color: #333333;
+    font-size: 13px;
+    font-weight: 500;
+    word-break: break-word;
+}
+
+
+/* =========================================
+   SUBMISSIONS
+========================================= */
+
+.admin-user-submissions {
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-user-submission {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 18px 20px;
+    border-top: 1px solid #eeeeee;
+}
+
+.admin-user-submission:hover {
+    background: #fafafa;
+}
+
+.admin-user-submission-type {
+    display: inline-block;
+    margin-bottom: 7px;
+    color: #777777;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.admin-user-submission h3 {
+    margin: 0 0 6px;
+    color: #222222;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.admin-user-submission p {
+    max-width: 650px;
+    margin: 0;
+    color: #777777;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.admin-user-submission-date {
+    flex: 0 0 auto;
+    padding-top: 17px;
+    color: #888888;
+    font-size: 11px;
+}
+
+
+/* =========================================
+   PANEL HEADER
+========================================= */
+
+.admin-panel-header {
+    padding: 18px 20px;
+    border-bottom: 1px solid #eeeeee;
+}
+
+.admin-panel-header h2 {
+    margin: 0;
+    color: #222222;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.admin-panel-eyebrow {
+    margin: 0 0 6px;
+    color: #888888;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+}
+
+
+/* =========================================
+   LOADING
+========================================= */
+
+.admin-loading {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #777777;
+    font-size: 13px;
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 900px) {
+
+    .admin-user-info-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .admin-user-info-grid > div:nth-child(3n) {
+        border-right: 1px solid #eeeeee;
+    }
+
+    .admin-user-info-grid > div:nth-child(2n) {
+        border-right: none;
+    }
+}
+
+
+@media (max-width: 600px) {
+
+    .admin-user-profile {
+        padding: 18px;
+    }
+
+    .admin-user-profile-avatar {
+        width: 56px;
+        height: 56px;
+        flex-basis: 56px;
+        font-size: 18px;
+    }
+
+    .admin-user-info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-user-info-grid > div,
+    .admin-user-info-grid > div:nth-child(2n),
+    .admin-user-info-grid > div:nth-child(3n) {
+        border-right: none;
+    }
+
+    .admin-user-submission {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .admin-user-submission-date {
+        padding-top: 0;
+    }
+}

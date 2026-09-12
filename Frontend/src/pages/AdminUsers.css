@@ -90,6 +90,14 @@
     background: #fafafa;
 }
 
+.admin-user-row {
+    cursor: pointer;
+}
+
+.admin-user-row:hover {
+    background: #f7f7f7;
+}
+
 
 /* =========================================
    USER CELL

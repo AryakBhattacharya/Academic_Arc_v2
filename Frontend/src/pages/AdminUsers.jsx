@@ -331,7 +331,11 @@ function AdminUsers() {
 
                                         {filteredUsers.map((user) => (
 
-                                            <tr key={user.id}>
+                                            <tr
+                                                key={user.id}
+                                                onClick={() => navigate(`/admin/users/${user.id}`)}
+                                                className="admin-user-row"
+                                            >
 
                                                 <td>
                                                     <div className="admin-user-cell">

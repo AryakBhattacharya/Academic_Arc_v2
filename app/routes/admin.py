@@ -335,3 +335,72 @@ def get_admin_users(
         })
 
     return results
+
+@router.get("/users/{user_id}")
+def get_admin_user(
+    user_id: int,
+    admin: User = Depends(get_current_admin),
+    db: Session = Depends(get_db)
+):
+    user = (
+        db.query(User)
+        .filter(User.id == user_id)
+        .first()
+    )
+
+    if not user:
+        raise HTTPException(
+            status_code=404,
+            detail="User not found"
+        )
+
+    student = (
+        db.query(Student)
+        .filter(Student.user_id == user.id)
+        .first()
+    )
+
+    submission_count = (
+        db.query(func.count(Submission.id))
+        .filter(Submission.user_id == user.id)
+        .scalar()
+    )
+
+    submissions = (
+        db.query(Submission)
+        .filter(Submission.user_id == user.id)
+        .order_by(Submission.created_at.desc())
+        .all()
+    )
+
+    return {
+        "id": user.id,
+        "name": user.name,
+        "email": user.email,
+        "phone": user.phone,
+        "is_student": user.is_student,
+        "profile_picture": user.profile_picture,
+        "district": user.district,
+        "village_locality": user.village_locality,
+        "dob": user.dob,
+        "created_at": user.created_at,
+
+        "school": student.school if student else None,
+        "student_class": student.student_class if student else None,
+
+        "submission_count": submission_count,
+
+        "submissions": [
+            {
+                "id": submission.id,
+                "content_type": submission.content_type,
+                "heading": submission.heading,
+                "description": submission.description,
+                "written_content": submission.written_content,
+                "media_url": submission.media_url,
+                "media_type": submission.media_type,
+                "created_at": submission.created_at
+            }
+            for submission in submissions
+        ]
+    }
