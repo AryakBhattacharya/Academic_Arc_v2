@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import './Dashboard.css'
+import FacebookEmbed from './FacebookEmbed'
 
 const isYouTubeUrl = (url) => {
   return url?.includes('youtube.com') || url?.includes('youtu.be')
@@ -74,12 +75,7 @@ function FeaturedCard({ post }) {
               allowFullScreen
             />
           ) : isFacebookUrl(post.media_url) ? (
-            <iframe
-              src={`https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(post.media_url)}&show_text=false`}
-              title={post.heading}
-              allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
-              allowFullScreen
-            />
+            <FacebookEmbed url={post.media_url} />
           ) : (
             <img src={post.media_url} alt={post.heading} />
           )}

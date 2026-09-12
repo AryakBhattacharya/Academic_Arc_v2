@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import './Category.css'
+import FacebookEmbed from './FacebookEmbed'
 
 function Category() {
   const { type } = useParams()
@@ -34,15 +35,17 @@ function Category() {
   const fetchLikes = async (submissionId) => {
     const token = localStorage.getItem('access_token')
 
-    if (!token) return
-
     try {
+      const headers = {}
+
+      if (token) {
+        headers.Authorization = `Bearer ${token}`
+      }
+
       const response = await fetch(
         `http://127.0.0.1:8000/submissions/${submissionId}/likes`,
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers,
         }
       )
 
@@ -160,13 +163,6 @@ function Category() {
       if (videoId) {
         return `https://www.youtube.com/embed/${videoId}`
       }
-    }
-
-    // Facebook
-    if (url.includes('facebook.com')) {
-      return `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(
-        url
-      )}&show_text=false`
     }
 
     // Google Drive
@@ -364,7 +360,19 @@ function Category() {
 
                       </div>
 
-                    )}
+                  )}
+
+                  {videoType &&
+                    !uploadedVideo &&
+                    submission.media_url?.includes('facebook.com') && (
+
+                      <div className="submission-video">
+
+                        <FacebookEmbed url={submission.media_url} />
+
+                      </div>
+
+                  )}
 
 
                   {/* UNSUPPORTED VIDEO LINK */}
@@ -372,6 +380,7 @@ function Category() {
                   {videoType &&
                     !uploadedVideo &&
                     !embedUrl &&
+                    !submission.media_url?.includes('facebook.com') &&
                     submission.media_url && (
 
                       <div className="submission-link">
