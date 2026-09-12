@@ -1,11 +1,12 @@
-import base64
+import uuid
+import asyncio
+from playwright.async_api import async_playwright
 
 from sqlalchemy.orm import Session
 
 from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
 from fastapi.responses import Response
 
-import uuid
 from app.supabase import supabase
 
 from app.database import get_db
@@ -18,7 +19,6 @@ from app.models.student import Student
 
 from app.services.auth import get_current_user, decode_access_token
 
-from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 from urllib.parse import urlparse
@@ -27,6 +27,32 @@ router = APIRouter(
     prefix="/submissions",
     tags=["Submissions"]
 )
+
+facebook_playwright = None
+facebook_browser = None
+facebook_browser_lock = asyncio.Lock()
+
+async def get_facebook_browser():
+    global facebook_playwright
+    global facebook_browser
+
+    if facebook_browser:
+        return facebook_browser
+
+    async with facebook_browser_lock:
+
+        if facebook_browser:
+            return facebook_browser
+
+        facebook_playwright = await async_playwright().start()
+
+        facebook_browser = await facebook_playwright.chromium.launch(
+            headless=True
+        )
+
+        print("FACEBOOK PLAYWRIGHT BROWSER STARTED")
+
+        return facebook_browser
 
 security = HTTPBearer()
 
@@ -59,7 +85,6 @@ def validate_external_url(url: str) -> bool:
     except Exception:
         return False
 
-
 @router.post("/")
 def create_submission(
     submission_data: SubmissionCreate,
@@ -89,7 +114,7 @@ def create_submission(
                 detail="Only YouTube, Facebook, and Google Drive links are allowed."
             )
 
-        allowed_media_types = {"video", "image", "audio", "pdf"}
+        allowed_media_types = {"video", "image", "audio"}
 
         if submission_data.media_type not in allowed_media_types:
             raise HTTPException(
@@ -268,6 +293,87 @@ def get_public_submissions(
     return results
 
 
+@router.get("/facebook-embed")
+async def get_facebook_embed(
+    url: str
+):
+    if not validate_external_url(url):
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid Facebook URL."
+        )
+
+    if "facebook.com" not in url and "fb.watch" not in url:
+        raise HTTPException(
+            status_code=400,
+            detail="Only Facebook URLs are supported."
+        )
+
+    context = None
+    page = None
+
+    try:
+        browser = await get_facebook_browser()
+
+        context = await browser.new_context(
+            user_agent=(
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) "
+                "Chrome/140.0.0.0 Safari/537.36"
+            )
+        )
+
+        page = await context.new_page()
+
+        await page.goto(
+            url,
+            wait_until="domcontentloaded",
+            timeout=30000
+        )
+
+        # Facebook may perform the redirect with JavaScript.
+        # Only wait if we are still on the share URL.
+        if "/share/" in page.url:
+
+            for _ in range(50):
+                await page.wait_for_timeout(100)
+
+                if "/share/" not in page.url:
+                    break
+
+        final_url = page.url
+
+        print("FACEBOOK ORIGINAL URL:", url)
+        print("FACEBOOK FINAL URL:", final_url)
+
+        if "/share/" in final_url:
+            raise HTTPException(
+                status_code=400,
+                detail="Facebook did not resolve the share link."
+            )
+
+        return {
+            "url": final_url
+        }
+
+    except HTTPException:
+        raise
+
+    except Exception as e:
+        print("Facebook Playwright error:", repr(e))
+
+        raise HTTPException(
+            status_code=500,
+            detail="Failed to resolve Facebook video."
+        )
+
+    finally:
+        if page:
+            await page.close()
+
+        if context:
+            await context.close()
+
 @router.get("/{submission_id}/media")
 def get_submission_media(
     submission_id: int,
@@ -415,25 +521,11 @@ def unlike_submission(
 @router.get("/{submission_id}/likes")
 def get_submission_likes(
     submission_id: int,
-    credentials: HTTPAuthorizationCredentials = Depends(security),
+    credentials: HTTPAuthorizationCredentials | None = Depends(
+        HTTPBearer(auto_error=False)
+    ),
     db: Session = Depends(get_db)
 ):
-    payload = decode_access_token(credentials.credentials)
-
-    if not payload:
-        raise HTTPException(
-            status_code=401,
-            detail="Invalid or expired token"
-        )
-
-    user_id = payload.get("user_id")
-
-    if not user_id:
-        raise HTTPException(
-            status_code=401,
-            detail="Invalid token"
-        )
-
     submission = (
         db.query(Submission)
         .filter(Submission.id == submission_id)
@@ -454,14 +546,25 @@ def get_submission_likes(
         .count()
     )
 
-    user_like = (
-        db.query(PostLike)
-        .filter(
-            PostLike.submission_id == submission_id,
-            PostLike.user_id == user_id
+    user_id = None
+
+    if credentials:
+        payload = decode_access_token(credentials.credentials)
+
+        if payload:
+            user_id = payload.get("user_id")
+
+    user_like = None
+
+    if user_id:
+        user_like = (
+            db.query(PostLike)
+            .filter(
+                PostLike.submission_id == submission_id,
+                PostLike.user_id == user_id
+            )
+            .first()
         )
-        .first()
-    )
 
     return {
         "submission_id": submission_id,

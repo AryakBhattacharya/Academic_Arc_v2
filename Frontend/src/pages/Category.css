@@ -172,6 +172,28 @@
   border: none;
 }
 
+.facebook-embed-container {
+  width: 100%;
+  overflow: hidden;
+}
+
+.facebook-embed-container .fb-video,
+.facebook-embed-container > div {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.facebook-embed-container iframe {
+  width: 100% !important;
+  max-width: 100% !important;
+  display: block;
+}
+
+.facebook-embed-fallback {
+  padding: 20px;
+  text-align: center;
+}
+
 
 /* Unsupported link */
 
